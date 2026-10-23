@@ -1,0 +1,807 @@
+{
+  "schemaVersion": 1,
+  "app": "SelectionBar",
+  "sourceProject": "SelectionBar",
+  "license": "GPL-3.0-only",
+  "sharedSourceHashes": {
+    "AppLocalizationKit": "0851a965a9dc105658cf8d362b0a14ad13b5ee0b02b6209ce89c7be404bd0174",
+    "LocalWorkflowKit": "de255ec749f18ae4f0850e00a0f176cab040782dde1b8f111f58cad7fbf2898e"
+  },
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 333,
+      "sha256": "da5602dbd93009bbe59dc253fcc836e23994fc598bf297775d8b75db1f594b61"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 1753,
+      "sha256": "1807d13bdd8c149eaa6dd4dbfe7916c7094f454da7da2f9a6f767bc4a30b8ce7"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1926,
+      "sha256": "03e5952acb9f5818f6b179ee7a4fc43e73f2f41edf18dec02165b053002e656c"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 763,
+      "sha256": "001ff77a4ad5acb43802cfba1cb65612184660ba428ca11cd6c94a1abff338ce"
+    },
+    {
+      "path": "SIGNING.md",
+      "bytes": 550,
+      "sha256": "9737ed60c7064312b92898397276cd218d4bd2e1adf308f24fe275afe8019fac"
+    },
+    {
+      "path": "SelectionBar/.gitignore",
+      "bytes": 32,
+      "sha256": "8c874ffac38bbfe7160be5fcbe7e39a6c5d0ccc83309db00f82db0be838f7e28"
+    },
+    {
+      "path": "SelectionBar/Extensions/EdgeNotes.popclipext/Config.json",
+      "bytes": 668,
+      "sha256": "174cf880c3a75f1245e6add5a0343626c43339f2672fe2ccfb192eeb117d997f"
+    },
+    {
+      "path": "SelectionBar/Extensions/EdgeNotes.popclipext/send.sh",
+      "bytes": 1021,
+      "sha256": "4d5b5479ae4da7d3b475666e9d7bf41e65edf9d5ee2ab63b4e948a78897dab0d"
+    },
+    {
+      "path": "SelectionBar/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "SelectionBar/Package.resolved",
+      "bytes": 290,
+      "sha256": "bfb5917fbf5eceb035333678c08ee7cb6c7790372b95a9a3df7e736554c9d2a2"
+    },
+    {
+      "path": "SelectionBar/Package.swift",
+      "bytes": 1164,
+      "sha256": "1030b8b27c3f561c1dadc0c2a9940063aec66ea0b1368dfbbdd43defedbe8fd2"
+    },
+    {
+      "path": "SelectionBar/README.md",
+      "bytes": 184,
+      "sha256": "7f34fcc32c212c5c265ad4bc9b949022590b882ff1d55659e5d8438b1773d379"
+    },
+    {
+      "path": "SelectionBar/Scripts/Info.plist",
+      "bytes": 1894,
+      "sha256": "3ab362243a0ae43fa2b3ae10555c5f3deaa20e9d2e4c9bd2cf66dbd2a4e33dbd"
+    },
+    {
+      "path": "SelectionBar/Scripts/build.sh",
+      "bytes": 1824,
+      "sha256": "b1031a290c253312e96c7c252480e4d7d7d1ca5c8bfa69a84fe95ac6d67828fd"
+    },
+    {
+      "path": "SelectionBar/Scripts/entitlements.plist",
+      "bytes": 294,
+      "sha256": "fed72d1a32aaff14e2df895ddc43fdb545ccf2741def229e6f4b6cde2aa31653"
+    },
+    {
+      "path": "SelectionBar/Scripts/format.sh",
+      "bytes": 714,
+      "sha256": "620a24b736cac3f5728274346895da605a8a8b23ae8fbd7e55710c1039d7950f"
+    },
+    {
+      "path": "SelectionBar/Scripts/icon.swift",
+      "bytes": 1908,
+      "sha256": "aa92eb9933d862d03aeebe7964b18f752e878e79b3072f212c6c3f6478d65e3b"
+    },
+    {
+      "path": "SelectionBar/Scripts/install.sh",
+      "bytes": 5262,
+      "sha256": "8b7e1953db67c097e3db5f08c620d7247a306dbddd58efb80966e3fa5cf68f64"
+    },
+    {
+      "path": "SelectionBar/Scripts/test-edgenotes.py",
+      "bytes": 3127,
+      "sha256": "e71484d1ac2deb7542d8fd2d4dda21706aac4a00df840e857fa9a29ebd6a6411"
+    },
+    {
+      "path": "SelectionBar/Scripts/test-install.sh",
+      "bytes": 4382,
+      "sha256": "40d4517391e82e97a22058cf3c58b4abb490a0be397b1f3177e63ac1c7a4776f"
+    },
+    {
+      "path": "SelectionBar/Scripts/test-native.py",
+      "bytes": 2756,
+      "sha256": "c6045ff17ca086cf5b1acc75814d8d97908395c72f7fe05f8a3ff9ad7959e834"
+    },
+    {
+      "path": "SelectionBar/Scripts/ui-inspect.swift",
+      "bytes": 9473,
+      "sha256": "c021c50789e329b24d0bdd1384c1926ab7eae4f4b2e17038b9f05baa4e6f1807"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/ActionListView.swift",
+      "bytes": 16615,
+      "sha256": "1e2d96827683ce5c62dd83bb8d2be234c2b6b1a69937351171b50539018773dd"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/AuthCoordinator.swift",
+      "bytes": 8483,
+      "sha256": "3222e94b5fbd5740843fcb48a7b65b09cd623fe5d62a723f10a60d0f0b8fa0d4"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/BrowserIntegration.swift",
+      "bytes": 4297,
+      "sha256": "34272a84caa0ad5dd3f7253811b8f1898b29080ff384351ead4c09e5b53cad4e"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/BrowserSettingsView.swift",
+      "bytes": 1597,
+      "sha256": "3d439ee8d123809160993cf11d7700881c433b2c6ea6be032dbd1897b4f4a8d7"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/BuiltInLibraryView.swift",
+      "bytes": 5001,
+      "sha256": "204b579a01c3f885ccd9040e8df6e029a2e8859ec35ef9c29192dd76fc10924a"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/ExtensionIcon.swift",
+      "bytes": 43394,
+      "sha256": "0bbbf95c228149aeabc351a8726d225aad3594af5a5c660e8b910b0d4f78f2c4"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/FloatingBar.swift",
+      "bytes": 42207,
+      "sha256": "a2320997afc98b2ca2f0e0d66ea68b0d9b183fdf541e35babfd63fd1134da0d7"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/HoverActionButton.swift",
+      "bytes": 1397,
+      "sha256": "6015e9f6529161ba593778ade45b5913d87725faa84c8347fc243818cecba7f4"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/IconifyAssets.swift",
+      "bytes": 11106,
+      "sha256": "c6f805d4636a6224364e8687de39c4691dfaadb5ca021344d607bfc9413e951d"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/NativeSmoke.swift",
+      "bytes": 29898,
+      "sha256": "6c672fcb9d602d6bc58ad7e86b63bad5294f212c9bc26f0d773e9e88a95099f4"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/PermissionCoordinator.swift",
+      "bytes": 980,
+      "sha256": "3c29f4997741b7ccf3273e8561ab31177da8162b03e365ff6f9982ebb29aa695"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SafeIconSVG.swift",
+      "bytes": 15103,
+      "sha256": "588f31b0381cb11c995b51f18bf57f5c2875803f70e9d0d23de1f0c430bd331b"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SelectionExecutor.swift",
+      "bytes": 33720,
+      "sha256": "acb3b13514a7fcd07c3fea4c6c4bf6bd08069c8e17f71eee28d329fba0a7e0ce"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SelectionModel.swift",
+      "bytes": 24943,
+      "sha256": "67759a121c6373e3b61b08fd924da1008e029172ac269a7b7ada38173d55075d"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SelectionMonitor.swift",
+      "bytes": 12836,
+      "sha256": "83cc158a7c40d055604b87800f1370fae5e922f6a1c45d8effed10626e3cf144"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SelectionWorkflows.swift",
+      "bytes": 3905,
+      "sha256": "e631ff01e6d6c7c8254dfd69957b4b1c1362f3402e30c58ff52dcb5a00c635bf"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SettingsView.swift",
+      "bytes": 15432,
+      "sha256": "f60ab53a70669c7fb38bd22768da400c52c8d2d73eb00d41d16b777c8e512d88"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SharingCoordinator.swift",
+      "bytes": 2964,
+      "sha256": "b0f0d36abb56750c964b6b817dbfd7cba78316d38c967d7aec5f257a7819ac76"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/ShortcutRecorder.swift",
+      "bytes": 4501,
+      "sha256": "302dcb272e06f5720230863434fdaaa95f6f0f974d5ca1b56c2d1c6afe50e337"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/SpellingSuggestions.swift",
+      "bytes": 5446,
+      "sha256": "fe8f85dcbc53dcd27b513b616f69a7bc46daf852f762ae5d1c46c0e45a2eb646"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/WebsiteRulesView.swift",
+      "bytes": 4603,
+      "sha256": "0fd09ce61457072acee0bffeab3d7966140e2af8d4de53981ab3fb298a265d46"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/WorkflowSettingsView.swift",
+      "bytes": 3780,
+      "sha256": "5e9cf3e91eca259fd55f802ee609695c29cfcac0d1b545bed226837f4cdcc045"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBar/main.swift",
+      "bytes": 9230,
+      "sha256": "0e3e28c0c681235b1bf6e05e2bbd60defba6aaf686b7c016cc0c35128d996b70"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ActionCatalog.swift",
+      "bytes": 1037,
+      "sha256": "4b086132f46d9e449389d04045cdc6bd347d8a4679d15ecbca254d66ccc4bbc0"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ActionContext.swift",
+      "bytes": 13846,
+      "sha256": "86d8608aa05c151d516e0c022043f80b5756c48a0ac057783aa74619dd5180c4"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/AssociatedApplications.swift",
+      "bytes": 2206,
+      "sha256": "1e9b28fe4489f36f4cd23d188b25ef39ef3ce3bbd37c44e6e1b202501c5f695b"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/BrowserBridge.swift",
+      "bytes": 11330,
+      "sha256": "482aa89007383d6b0e2fdca60abdaa1ec3f4e5100fbcf87f473049c371ce9ee3"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/BuiltInCatalog.swift",
+      "bytes": 5866,
+      "sha256": "8f1f53e8bed4569897dc67e4a27750cb28c6c07b646937754735f90e828d66e8"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ClassicScripts.swift",
+      "bytes": 3637,
+      "sha256": "9c5129e979835cec7e00b39d35d8c45017c3274e52712c7386cf4e93b714446a"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ExtensionOptions.swift",
+      "bytes": 1215,
+      "sha256": "ab5e4b0529ea390c22cb9b016686ae0f4a99385de2f1f26afe9c040b6e678421"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ExternalScripts.swift",
+      "bytes": 7691,
+      "sha256": "08012493e9d44dc325ecb9905ecfe26a6ad2dca8f9e3ea9f7f34db6eca930b03"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/HTTPDispatcher.swift",
+      "bytes": 5478,
+      "sha256": "195744aae813a896f171002cee625376ebc9c839c6aee7a13113dfb34726a476"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/HostDispatcher.swift",
+      "bytes": 1039,
+      "sha256": "b308f4ab299aec74bd5651a192868b8d559b8e60f296f021183477c66f05fbea"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/InterpreterResolver.swift",
+      "bytes": 3333,
+      "sha256": "2a79c20c54e8ee07e458d260cac74c78c42969123f730890ba9d53a5780fbf11"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/JavaScriptEngine.swift",
+      "bytes": 19337,
+      "sha256": "1154b2c5d5e86523523975a003e4c76117309bdb3de9da61e1fc151b0c8bd959"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/JavaScriptNativeExtras.swift",
+      "bytes": 9816,
+      "sha256": "9c8c4c94d57d6c61e9fd0bb1cf230777360f3764034f953d7be35c2dc80b8b19"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/KeyboardLayout.swift",
+      "bytes": 4813,
+      "sha256": "30b934c8a7d0fa60a6a0fb007629cac6936664051afe9194622225057dcb5df5"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/LayoutTree.swift",
+      "bytes": 771,
+      "sha256": "0baf8b7f9151ee5e7445da77137448b212a1c76116e7bc10586191cf9d858232"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/LibraryEditing.swift",
+      "bytes": 9250,
+      "sha256": "b2c514810f8ed6ab80514cde7eaea2ea155b0ab27c9e8fa4100762ce38c09037"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/LineProtocol.swift",
+      "bytes": 1508,
+      "sha256": "0a8c5d017b806b28eb10ea973678cdb006d124840c79487ea85ac5d75f8f9808"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Localization.swift",
+      "bytes": 545,
+      "sha256": "97380364e2543903ed95720dd07bf96dd99efb932b9a51afed7a355f248d43dd"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Manifest.swift",
+      "bytes": 15016,
+      "sha256": "5d5aba0fd6e70766a7fc9a098715b7e7fa67df209ca0704b6081c51bb0517d05"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Migration.swift",
+      "bytes": 15818,
+      "sha256": "537e1bc82e3ce751b7a8793381dc5482764868d61fbb6f1d5f85d0e40eb74d80"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Models.swift",
+      "bytes": 8533,
+      "sha256": "71ffbac438ace1abfc0df3f8908f3db15d28dee0429fe8207d9b04f9eba77c8e"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/OwnedProcess.swift",
+      "bytes": 9898,
+      "sha256": "9256b23ef6e4c2da25510d7c446d43f5658f19781096835933ffe099143b15ee"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/PrivateStore.swift",
+      "bytes": 8866,
+      "sha256": "92ae7402346b93fe33b4a1b5d8d748dacea97dfb082535fcc1db5c070356f939"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ProcessRunner.swift",
+      "bytes": 3346,
+      "sha256": "6f896a85203d497c898e4734730e95dd69968f4b27355c32b4c90fc88c5bde57"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/Localization/en.lproj/Localizable.strings",
+      "bytes": 28914,
+      "sha256": "3a900a90419141e111ce39451273289466a51823217047fc6ace4cbee14db854"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/Localization/zh-Hans.lproj/Localizable.strings",
+      "bytes": 26061,
+      "sha256": "d9fc4d94e08b68fa92396d99126a632357ec6a58b91aa34faafe8d2623326846"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/Localization/zh-Hant.lproj/Localizable.strings",
+      "bytes": 26049,
+      "sha256": "e959f8d598c2bf123a94178ce4676f10b86c892347f0724a78acd486dae2aeef"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/api-extras.js",
+      "bytes": 6288,
+      "sha256": "377a6928a558c47b7a9eb2400ca4b0178a08f76b481b4eab2d208e83f4e311ae"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/browser-selection.js",
+      "bytes": 1609,
+      "sha256": "1443c25c53fc77ac421669a483cf106da0c35a4521a86b191c01633b7111712c"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/compatibility.js",
+      "bytes": 19771,
+      "sha256": "0df7962152db41b766b35776e60bbd4f6e96269da6939beba95c4526c2b1b0b3"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/vendor-api.js",
+      "bytes": 1508807,
+      "sha256": "0571947ddefce51b0ca2dfb6b9a59d2415ed903b4769293159c70cd728105590"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/vendor-api.js.LEGAL.txt",
+      "bytes": 745,
+      "sha256": "a75b12b8366a1d2f5a294346ebd452222c6914f2c5ab310d07505ad41f6e92fc"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/Resources/vendor-licenses.txt",
+      "bytes": 176367,
+      "sha256": "f5bdd302e8d72b0adfb8ff40bbfa3927b725138c49a31570459941994afedba9"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/SafeRichTextHTML.swift",
+      "bytes": 8139,
+      "sha256": "ecc2985bf9b248638b5a38954729e45a06958423fbe45a56295f98e7fb0ba071"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ScriptSession.swift",
+      "bytes": 5298,
+      "sha256": "d56d4e213c0630b811104677f0aa4dd9184c08f8694114cec799828aa5c0fdca"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/SelectionIntegrity.swift",
+      "bytes": 1321,
+      "sha256": "d3c8117aaae307935945291da50326d9d947fbdbee0573e0e4c1445217935f52"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ShortcutBridge.swift",
+      "bytes": 3534,
+      "sha256": "a5a62a3e88a39f3f769f883fdc81de748cef33db8b8552507e47fd4aab308396"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ShortcutRecording.swift",
+      "bytes": 1203,
+      "sha256": "efe438d3ddf39c2540082ce4fe8d74e3d84a3786a7030667903a8f170168be02"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/ToolbarPopulation.swift",
+      "bytes": 4077,
+      "sha256": "c5993235eaabce140d14e48d51388e73578b7e1ebe6d6bf0393fbecb8fc3a5a3"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarCore/WebsiteRules.swift",
+      "bytes": 6533,
+      "sha256": "e99e7d03fca6120004fd09463b0bf3e6d33c08c33448d2f159ca6d9479e84273"
+    },
+    {
+      "path": "SelectionBar/Sources/SelectionBarRuntime/main.swift",
+      "bytes": 3566,
+      "sha256": "1859b285e0b93fc79dd25f2759f20d41e3eebc71f2c74655c97fd3ac297f8063"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/APIExtrasTests.swift",
+      "bytes": 12978,
+      "sha256": "33e16914ce58e794445207275b01848c618b40cbd203a838856ffe04425b9f9b"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ActionCatalogTests.swift",
+      "bytes": 2629,
+      "sha256": "23cab2aa5b2977e13cf6c347fd0f7351e2e052f1cf03df7607f87f5ca2e71dab"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/AssociatedApplicationsTests.swift",
+      "bytes": 1864,
+      "sha256": "3305f0cd1e45bb19742c462729cfee5fc2a1866c6488ef8b752eb8db442d5d5d"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/BrowserBridgeTests.swift",
+      "bytes": 3793,
+      "sha256": "3383e616fc4296a996ec6b94b836fa6c6b682dc4ca15c8ef9d5345342b624192"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/BuiltInCatalogTests.swift",
+      "bytes": 2996,
+      "sha256": "6300006d5e867cb91b5ec5f399eafb6931a25baf2e8c2226b908a18bf20870bb"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ClassicScriptsTests.swift",
+      "bytes": 3682,
+      "sha256": "41e95ad4cb68967dcb98ba22f7886d79c517e12ea974dc9d7e98c019f7f2310b"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/EdgeNotesExtensionTests.swift",
+      "bytes": 1149,
+      "sha256": "87f57ef925a9c9f66e8d93954152ed6d494b051277339026754caedf74ac38cb"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/EmailDetectionTests.swift",
+      "bytes": 995,
+      "sha256": "327530a886de82816eaff4e6f8c3a3222ba2e8b1a179ecf81e59c1da8c217aec"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ExtensionOptionsTests.swift",
+      "bytes": 2545,
+      "sha256": "5b5435c3850dd693da0f3a6b60697a6ca0fc39cfea6288e26e98b1259d2ee2c2"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/HTTPTests.swift",
+      "bytes": 3940,
+      "sha256": "02812feb30b0abedfc8b782a804cbba637b3cdf34ace336ca6386c7857726305"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/InterpreterResolverTests.swift",
+      "bytes": 3893,
+      "sha256": "2473cf12d71a6e275b92c0b5e896cf1972c2f6a9eaf55246cd4fd1f39a322403"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/JavaScriptTests.swift",
+      "bytes": 6948,
+      "sha256": "460d45dbc7885c47f4b57f152c2d7debf1545b654c46a40aaa3887d34b65392f"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/KeyboardLayoutTests.swift",
+      "bytes": 2351,
+      "sha256": "090daa8dfe7467611b6722667982c6d5531fb6e234c9f7097a7075b612c3b10e"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/LayoutTreeTests.swift",
+      "bytes": 1389,
+      "sha256": "7b97e21b5632c1fef42f3031f3d55aa2bbbf8c627fc54961e7cf7dc1c9d05686"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/LibraryEditingTests.swift",
+      "bytes": 4867,
+      "sha256": "3a7f1f999409103cd033f7c55e5542539e818dc7283a3d1529c3ad9085b6c172"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ManifestTests.swift",
+      "bytes": 6766,
+      "sha256": "d6a37495c31884327f049858947e7099dcf2751f92933a39e76272097af70f74"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/MigrationTests.swift",
+      "bytes": 11364,
+      "sha256": "e2965285dadf0eb2c94c56bbc156c93ba1822707bfdb66bf17137fa8464bb740"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ModuleTests.swift",
+      "bytes": 12916,
+      "sha256": "b352d5d5a316529b4f1dfe36d6074208c90ccd7ab2f252cd734b11d6b7341c7b"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/OwnedProcessTests.swift",
+      "bytes": 3720,
+      "sha256": "dddf7cf2a5fb4618d4df79dd5b55a3adcac3e8825f28cb1068cc571ec6ff1c94"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/PrivateStoreTests.swift",
+      "bytes": 4202,
+      "sha256": "1a05a62aee8ec542a9884c31aac44d951d6f878c9f7b00b8ce013aeec1b6deb7"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/SQLiteReaderTests.swift",
+      "bytes": 1888,
+      "sha256": "9f4c04d55634c77fcbc8595c72175941575570addd5775fb6d3672002420d41d"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/SelectionIntegrityTests.swift",
+      "bytes": 1062,
+      "sha256": "774262b2bf2a5714aa8f6c036d6d1ed9d97fe59f061242e0769ac814578ace12"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ShortcutBridgeTests.swift",
+      "bytes": 1344,
+      "sha256": "e5fe5c45389fde373954b3491125fad0b9a82dfa79ab8f4d7e407c4dc16cd84c"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ShortcutRecordingTests.swift",
+      "bytes": 1867,
+      "sha256": "b0d27507be64cbeedf7f5d48406ad637032bad88efbebe8b69d2b6ab8c5f4221"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/ToolbarPopulationTests.swift",
+      "bytes": 6636,
+      "sha256": "0b63d997c498a77d958219b076f4a437ef544e515c9f1b1a91d918d5dc2d217c"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/WebsiteRulesTests.swift",
+      "bytes": 2398,
+      "sha256": "ae0e22a7b5ace9d7d4c30873c047a59b2830431b06891c6576726c709602e8ac"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/WorkerSessionTests.swift",
+      "bytes": 5531,
+      "sha256": "2a9d9c2376cbc78b37cd47ed9407c589832f35c40fda0050aa45ec2b46663bde"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarCoreTests/WorkflowMigrationTests.swift",
+      "bytes": 2116,
+      "sha256": "e20f8aee04b0c82c797107c21c8a39d6e5e5fc5c3c64ca121ef64f2538c10325"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/BrowserQueueTests.swift",
+      "bytes": 1238,
+      "sha256": "fec8a14166235f765d53e64af33dab6356b58e20eb96f04f7df7d8fd96a32c0c"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/FailurePresentationTests.swift",
+      "bytes": 2153,
+      "sha256": "b42b83140772bfd1ff38439bd00db9eb39d05a5ff7b8cfd80eb742df21bc554b"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/IconTests.swift",
+      "bytes": 11431,
+      "sha256": "d3593449e9fdae414b9c1ca18d820ce2cdd232f262201bc18a82d267c5a5201b"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/PasteboardSnapshotTests.swift",
+      "bytes": 2810,
+      "sha256": "38e00d01e561fa5667bb6c59005e11464584dbdb6970e3acd39e64ab7f3792a1"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/RecorderControlTests.swift",
+      "bytes": 2876,
+      "sha256": "59dd30e1f3110a5c72f291f7b6d80bdf52db3c1ba457e5aca94181e353b9b5c7"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionFocusTests.swift",
+      "bytes": 4148,
+      "sha256": "8dffb2f95b3fb5e23c6c0a35ebb3386552b9d97a4336a2629d4f6d5a89a23676"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionModelTests.swift",
+      "bytes": 6287,
+      "sha256": "7724b8b446233c1d5f9f86108cef1e55cf364636d2e01b2ab13cc924ac199c10"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionMonitorTests.swift",
+      "bytes": 587,
+      "sha256": "e27deb71552809bde920ec91db5f43b8ed8f9368d2e768ad7f143d3c4974fc82"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionWorkflowTests.swift",
+      "bytes": 3153,
+      "sha256": "5ed27ef07cfc8eb0a61652c81030e1ba1a82128ca5103ca01684472d6a76d6ca"
+    },
+    {
+      "path": "SelectionBar/Tests/SelectionBarIconTests/SpellingSuggestionsTests.swift",
+      "bytes": 5339,
+      "sha256": "c1e6c9e8c3f2e885a128558312eb0df977f9aa43708d2c9d7c0cc1cd0ec2e087"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/.gitignore",
+      "bytes": 14,
+      "sha256": "4d56952b0fb13bf8f9b6c13a6d4c34a075bac3af447636a1df4335d7576e2f97"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/README.md",
+      "bytes": 1631,
+      "sha256": "e3fa34b19dec0f3d3fa02989668175d7b22f5ad9b230960df9d4e44801529abe"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/build.mjs",
+      "bytes": 2032,
+      "sha256": "a83d5696274e48d5a3e8bc916bd5b290932933e8e5879392b0dbe18d0c40fc4d"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/check.swift",
+      "bytes": 973,
+      "sha256": "e21fe955cbbbd78870e81b00eba7e27b20a60d1f34773bdb5e8b89b71fa4786e"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/entry.cjs",
+      "bytes": 2942,
+      "sha256": "efee54166e4176f15792785fb1843fc3f23b4c2c17706979fa25863bbc2151ea"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/package-lock.json",
+      "bytes": 70543,
+      "sha256": "ebe623fd4dccc5c57abaaeda1cc61983670555f0fcff195b4e98d2c3a74dd4a2"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/package.json",
+      "bytes": 1041,
+      "sha256": "da2a2b55369f55a69ec791f468285579988015943310bf2f34fda2752103e513"
+    },
+    {
+      "path": "SelectionBar/Tools/CompatibilityRuntime/web-primitives.cjs",
+      "bytes": 9264,
+      "sha256": "bc14a32d187dc743f715568c36f23af2a3d5aa6a979108829e0620c97ae04d60"
+    },
+    {
+      "path": "SelectionBar/docs/compatibility.md",
+      "bytes": 2464,
+      "sha256": "1162947d53ed1a8ebabc5f601888a80e7eb7a865bb0959d958bd31dfcb5e2edf"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Package.swift",
+      "bytes": 457,
+      "sha256": "9588dd23cd86e80216b7b17a961aac141cd98392e4502d3fcb5cc1244b73edd5"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Sources/AppLocalizationKit/AppLocalizer.swift",
+      "bytes": 5248,
+      "sha256": "c7669743bab2757de9002058681c01fa1e4b1828810de92f4b2816df451166aa"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Tests/AppLocalizationKitTests/AppLocalizerTests.swift",
+      "bytes": 2347,
+      "sha256": "a17526e6daa5753bb50c7f8cf54fa797f3e3f09ede39bd2d715ac4eee1fa279a"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Tests/AppLocalizationKitTests/Fixtures/LocalizationFixture.bundle/Info.plist",
+      "bytes": 373,
+      "sha256": "6496a60b4b8ac8cf4f74a7645ac8fdfd662f7d6aeab08aebaf70793977aeca32"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Tests/AppLocalizationKitTests/Fixtures/LocalizationFixture.bundle/en.lproj/Localizable.strings",
+      "bytes": 67,
+      "sha256": "73223e8cc4d1464bddd2ab630b3ead85f94d791ab588424278b05eca95aaf09d"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Tests/AppLocalizationKitTests/Fixtures/LocalizationFixture.bundle/zh-Hans.lproj/Localizable.strings",
+      "bytes": 27,
+      "sha256": "b86d1275f4bffc38cea14a52477feb58a82c245eaabe9ccd222a4552582b64aa"
+    },
+    {
+      "path": "Shared/AppLocalizationKit/Tests/AppLocalizationKitTests/Fixtures/LocalizationFixture.bundle/zh-Hant.lproj/Localizable.strings",
+      "bytes": 27,
+      "sha256": "4a20b23d7d8b82de32523cf21dca75a07213f9c0caa68e11bfc43f64a90b537f"
+    },
+    {
+      "path": "Shared/LocalWorkflowKit/Package.swift",
+      "bytes": 413,
+      "sha256": "e0aa3546600005f1870ea76c8c4547dafee4885c4ce2cb295207a0397ed3a4d2"
+    },
+    {
+      "path": "Shared/LocalWorkflowKit/Sources/LocalWorkflowKit/TextRecipe.swift",
+      "bytes": 1709,
+      "sha256": "dd172406a1b00d726c3777368749112bdf6035de0a2d2d5bea451578c7872209"
+    },
+    {
+      "path": "Shared/LocalWorkflowKit/Sources/LocalWorkflowKit/WorkflowDraft.swift",
+      "bytes": 6319,
+      "sha256": "2beba02749097c5f04247abaf74787cf59a8f9643141c1d4079ae52eb52dc100"
+    },
+    {
+      "path": "Shared/LocalWorkflowKit/Sources/LocalWorkflowKit/WorkflowFiles.swift",
+      "bytes": 5714,
+      "sha256": "f531300a55b5d5c5ea18ff0f74fd9ce68c1d0d6ecfac9123fe511e184d0fff43"
+    },
+    {
+      "path": "Shared/LocalWorkflowKit/Tests/LocalWorkflowKitTests/WorkflowTests.swift",
+      "bytes": 4538,
+      "sha256": "11ae94f4b5de4a2ce5815a29668961c3612989177d3464b59b66d5f437faad64"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 821,
+      "sha256": "1cdaaf4d67c01100bdb7475c293166eb459fe1a1d221a22fd94003888f7b0dd6"
+    },
+    {
+      "path": "docs/localization.md",
+      "bytes": 3463,
+      "sha256": "e8f9223a5e6e48c343b0c99ff379e690aaacba46017549c645cf942160b5fe57"
+    },
+    {
+      "path": "scripts/localization/app-info.json",
+      "bytes": 4761,
+      "sha256": "7f7b5694343c6432ef0eeac8e14c565dbe1527adda778d9b535adac5d553e452"
+    },
+    {
+      "path": "scripts/localization/check-catalogs.py",
+      "bytes": 5033,
+      "sha256": "248f66da1ca4a24af60d48c3ddfb79f3a5bde8b084f2982a4a611344fb8bab43"
+    },
+    {
+      "path": "scripts/localization/collect-source-keys.py",
+      "bytes": 2859,
+      "sha256": "383d5775e8993bd7cc21ed6f6fadfb64a5912f71f9619d98532b44e8d16e4c7c"
+    },
+    {
+      "path": "scripts/localization/context-overrides.json",
+      "bytes": 47720,
+      "sha256": "0c962bee80c6bfaf5da3eee0619dd1d50ddc94d08afaa550643da39807e1728b"
+    },
+    {
+      "path": "scripts/localization/english-overrides.json",
+      "bytes": 16183,
+      "sha256": "2a4f1098d13d7fcac0d5bc2d5bfa11b4e4a17fea97148c58d66473295d020893"
+    },
+    {
+      "path": "scripts/localization/english-ui.json",
+      "bytes": 15299,
+      "sha256": "2516f079467e935c92605ebf58f13794cfc8071540ecbdd92382a159d8842d6d"
+    },
+    {
+      "path": "scripts/localization/generate-catalogs.py",
+      "bytes": 4818,
+      "sha256": "36b0841d3abb1924aec1748ee48acee1a19a6a1cbe4fcb07a3aff31c4b306b9c"
+    },
+    {
+      "path": "scripts/localization/localize-swift.swift",
+      "bytes": 10995,
+      "sha256": "9b739b127a589a0d49dc615df65c389f2d407984b665d8819226d757a3441e77"
+    },
+    {
+      "path": "scripts/localization/package-resources.py",
+      "bytes": 2796,
+      "sha256": "27d5989d88f9efc9bb7248e3d2f4da725bc7e52a5f06997d4d51a059f01c9945"
+    },
+    {
+      "path": "scripts/localization/simplify-catalog.swift",
+      "bytes": 1612,
+      "sha256": "a57c567ecc13f0226dff062eacec050db83c3a5a77817530acac83a6999897fe"
+    },
+    {
+      "path": "scripts/localization/translate-catalog.swift",
+      "bytes": 2273,
+      "sha256": "db37713fb62d3d4d9c4e9b739b5ca9b13b349d302f9f653eb73bb537590064d4"
+    }
+  ]
+}

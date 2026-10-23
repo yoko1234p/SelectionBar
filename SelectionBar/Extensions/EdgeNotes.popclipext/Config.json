@@ -1,0 +1,14 @@
+{
+  "identifier": "local.pakwingho.selectionbar.edgenotes",
+  "name": "EdgeNotes",
+  "title": "送往 EdgeNotes",
+  "description": "將所選文字送到 EdgeNotes，選擇資料夾及筆記後儲存。",
+  "icon": "symbol:sidebar.right",
+  "app": {
+    "name": "EdgeNotes",
+    "bundleIdentifiers": ["local.pakwingho.edgenotes"],
+    "checkInstalled": true
+  },
+  "entitlements": ["script"],
+  "javascript": "try { await popclip.runShellScriptFile('send.sh', {interpreter: '/bin/sh', shellMode: 'nonlogin', stdin: popclip.input.text}); } catch (error) { throw Error(typeof error.stderr === 'string' && error.stderr.trim() ? error.stderr.trim() : error.message); }"
+}
