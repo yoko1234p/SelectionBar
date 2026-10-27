@@ -4,6 +4,36 @@ import XCTest
 @testable import SelectionBar
 
 final class SelectionMonitorTests: XCTestCase {
+  func testOwnOverlayAndActiveWindowsDoNotConsumeClicksForAnotherApplication() {
+    let toolbar = CGRect(x: 100, y: 100, width: 200, height: 44)
+    let settings = CGRect(x: -600, y: 30, width: 500, height: 600)
+    var filter = SelectionInputFilter()
+    XCTAssertTrue(
+      filter.ignoresMouse(
+        type: .leftMouseDown, pointer: CGPoint(x: 120, y: 110), overlay: toolbar, activeWindows: [])
+    )
+    XCTAssertTrue(
+      filter.ignoresMouse(
+        type: .leftMouseUp, pointer: CGPoint(x: 350, y: 110), overlay: toolbar, activeWindows: []),
+      "Releasing outside after pressing the toolbar must not start a selection")
+    XCTAssertTrue(
+      filter.ignoresMouse(
+        type: .leftMouseDown, pointer: CGPoint(x: -200, y: 100), overlay: toolbar,
+        activeWindows: [settings]))
+    XCTAssertTrue(
+      filter.ignoresMouse(
+        type: .leftMouseUp, pointer: CGPoint(x: -200, y: 100), overlay: toolbar,
+        activeWindows: [settings]))
+    XCTAssertFalse(
+      filter.ignoresMouse(
+        type: .leftMouseDown, pointer: CGPoint(x: -200, y: 100), overlay: toolbar, activeWindows: []
+      ))
+    XCTAssertFalse(
+      filter.ignoresMouse(
+        type: .leftMouseUp, pointer: CGPoint(x: 350, y: 110), overlay: toolbar,
+        activeWindows: [settings]))
+  }
+
   @MainActor func testRefreshDismissesToolbarWhenAutomaticMonitoringStops() {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: root) }

@@ -27,6 +27,7 @@ final class SelectionModel: ObservableObject {
   var settingsChanged: (() -> Void)?
   var showSettings: (() -> Void)?
   var dismissBar: (() -> Void)?
+  var overlayFrame: (() -> CGRect?)?
   var showResult: ((String, Bool) -> Void)?
   var showFailure: ((ActionFailure, SelectionSnapshot) -> Void)?
   var showLargeText: ((String) -> Void)?

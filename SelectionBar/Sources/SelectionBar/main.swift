@@ -132,6 +132,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     model.showSettings = { [weak self] in self?.showWindow() }
     model.dismissBar = { [weak self] in self?.bar?.dismiss() }
+    model.overlayFrame = { [weak self] in self?.bar?.visibleFrame }
     model.showResult = { [weak self] text, preview in self?.bar?.showResult(text, preview: preview)
     }
     model.showFailure = { [weak self] failure, snapshot in

@@ -1,3 +1,9 @@
+# 0.5.6 — source update (not yet a downloadable release)
+
+- **English:** Keep selection monitoring working after BarPilot opens and closes while the same app remains active. The monitor preserves input events, restores a system-disabled tap and keeps toolbar buttons clickable. Verified with 169 tests and a real BarPilot interaction.
+- **繁體中文：** 修正同一 App 保持前台時，BarPilot 展開再收起後選字工具列失效。保留原有輸入事件、恢復系統停用的監聽，工具列按鈕仍可操作。通過 169 項測試及 BarPilot 實機操作。
+- **简体中文：** 修复同一 App 保持前台时，BarPilot 展开再收起后选字工具栏失效。保留原有输入事件、恢复系统停用的监听，工具栏按钮仍可操作。通过 169 项测试及 BarPilot 实机操作。
+
 # 0.5.5 — source update (not yet a downloadable release)
 
 - **English:** Fix invisible selection toolbars after hidden/login launches without stealing focus or opening settings. Ignore unrelated background-app exits and restore selection monitoring after wake. Verified with 168 unit tests and native hidden-launch checks.

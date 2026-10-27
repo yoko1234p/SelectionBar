@@ -981,6 +981,7 @@ final class FloatingBar: NSObject {
     guard panel?.isVisible == true, !isBusy else { return }
     redrawIcons?()
   }
+  var visibleFrame: CGRect? { panel?.isVisible == true ? panel?.frame : nil }
   @objc private func clicked(_ sender: NSButton) {
     if let id = sender.identifier?.rawValue { actions[id]?() }
   }

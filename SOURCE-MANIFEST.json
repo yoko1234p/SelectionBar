@@ -30,8 +30,8 @@
     },
     {
       "path": "RELEASE_NOTES.md",
-      "bytes": 4274,
-      "sha256": "f89b92621883ce837f651dd362598cad96407aebcce7fe7235b08ed81f31d2e0"
+      "bytes": 5100,
+      "sha256": "f2d91ef2205ae2fbee2fae67e1278a0b39dd987e75e9a603fa84ff99980c3b58"
     },
     {
       "path": "SECURITY.md",
@@ -75,13 +75,13 @@
     },
     {
       "path": "SelectionBar/README.md",
-      "bytes": 299,
-      "sha256": "0c6503da113e01fac1d00cb69910af7bcb22e88252901c979e99dec29155630c"
+      "bytes": 396,
+      "sha256": "9fc6f755cbaa3d9666b69f1c1808e432315518e8b16feee7c6ae224bd17e8b36"
     },
     {
       "path": "SelectionBar/Scripts/Info.plist",
       "bytes": 1894,
-      "sha256": "3026b4d645f78e6ec3884a0c6e585505f01bb7e8445ffe571c170e9246a2ecd8"
+      "sha256": "619c5600e9cb62a8695ed878a3dc765895784a05a1e7db9884ba134d71d8c828"
     },
     {
       "path": "SelectionBar/Scripts/build.sh",
@@ -160,8 +160,8 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/FloatingBar.swift",
-      "bytes": 43892,
-      "sha256": "6dab86c837abff28fa3454cd918dc4db1f98ee5b131c88004de19de0e77e667e"
+      "bytes": 43970,
+      "sha256": "a88843c8e3d47fa1b5f6b934b479cf48301c1e0ecc6c92739fca4c40545b4758"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/HoverActionButton.swift",
@@ -200,13 +200,13 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionModel.swift",
-      "bytes": 25056,
-      "sha256": "47ccf9bf8161ce8ee409e8e745921dc5e69852f24b4be2250926a8572c3741a3"
+      "bytes": 25093,
+      "sha256": "f483856cc65a9a9a326ec1c92a62aaca4d0c8f0cfe062fa0513adccd2ee3b366"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionMonitor.swift",
-      "bytes": 14915,
-      "sha256": "5ca1653511a32727845d0079facc7b5cd7bb942c914e11788d28d43a1b4621b5"
+      "bytes": 19498,
+      "sha256": "bfa9a2096661d386f94463935134652038cdbee3ce8804c071e1f1ac08c091cb"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionWorkflows.swift",
@@ -245,8 +245,8 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/main.swift",
-      "bytes": 9230,
-      "sha256": "0e3e28c0c681235b1bf6e05e2bbd60defba6aaf686b7c016cc0c35128d996b70"
+      "bytes": 9298,
+      "sha256": "3e204ff2619c56c629e148c10d1439379e508216ed085dcfafa457d2b64f1b19"
     },
     {
       "path": "SelectionBar/Sources/SelectionBarCore/ActionCatalog.swift",
@@ -630,8 +630,8 @@
     },
     {
       "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionMonitorTests.swift",
-      "bytes": 2839,
-      "sha256": "3b293129e116d9c7644cb903f80c3490dcbe332afd8607c396e5bc610d364aba"
+      "bytes": 4125,
+      "sha256": "c678a08157430ed8e71b064c52757fd01c70f366728c24694bbae2b9f7a4b077"
     },
     {
       "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionWorkflowTests.swift",
@@ -687,6 +687,11 @@
       "path": "SelectionBar/docs/compatibility.md",
       "bytes": 2464,
       "sha256": "1162947d53ed1a8ebabc5f601888a80e7eb7a865bb0959d958bd31dfcb5e2edf"
+    },
+    {
+      "path": "SelectionBar/docs/selection-monitor-0.5.6.md",
+      "bytes": 2860,
+      "sha256": "880efdde5d5f16ba7b9d4a3cb574159f16c780667869057a94b287df7b3d9c7e"
     },
     {
       "path": "SelectionBar/docs/selection-visibility-0.5.5.md",

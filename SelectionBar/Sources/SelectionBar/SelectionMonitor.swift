@@ -59,7 +59,11 @@ final class SelectionLease {
 final class SelectionMonitor {
   private let model: SelectionModel
   private let onSelection: (SelectionSnapshot) -> Void
-  private var global: Any?
+  private var eventTap: CFMachPort?
+  private var eventSource: CFRunLoopSource?
+  private var fallback: Any?
+  private var inputGeneration: UInt64 = 0
+  private var inputFilter = SelectionInputFilter()
   private var pending: DispatchWorkItem?
   private var observers: [NSObjectProtocol] = []
   private let workspace: NotificationCenter
@@ -122,23 +126,98 @@ final class SelectionMonitor {
     guard model.storageError == nil, model.library.settings.enabled, model.permission,
       !model.conflict
     else { return }
-    global = NSEvent.addGlobalMonitorForEvents(matching: [
+    installInputMonitor()
+  }
+  private func installInputMonitor() {
+    let types: [CGEventType] = [.leftMouseDown, .leftMouseUp, .keyUp, .scrollWheel]
+    let mask = types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
+    let context = Unmanaged.passUnretained(self).toOpaque()
+    if let tap = CGEvent.tapCreate(
+      tap: .cgSessionEventTap, place: .tailAppendEventTap, options: .defaultTap,
+      eventsOfInterest: mask,
+      callback: { _, type, event, context in
+        if let context {
+          MainActor.assumeIsolated {
+            Unmanaged<SelectionMonitor>.fromOpaque(context).takeUnretainedValue()
+              .receivedTap(type, event: event)
+          }
+        }
+        // This is an observer: never modify, suppress or replace user input.
+        return Unmanaged.passUnretained(event)
+      }, userInfo: context),
+      let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+    {
+      eventTap = tap
+      eventSource = source
+      CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+      CGEvent.tapEnable(tap: tap, enable: true)
+      SelectionDiagnostics.record("input tap installed")
+      return
+    }
+    // Preserve the previous monitoring path if macOS refuses an event tap.
+    SelectionDiagnostics.record("input tap unavailable; using AppKit monitor")
+    fallback = NSEvent.addGlobalMonitorForEvents(matching: [
       .leftMouseDown, .leftMouseUp, .keyUp, .scrollWheel,
     ]) { [weak self] event in
-      // AppKit delivers this on the main thread. Preserve event ordering and
-      // pointer state instead of deferring mouse-down until after mouse-up.
-      MainActor.assumeIsolated { self?.handle(event) }
+      MainActor.assumeIsolated { self?.handle(event, pointer: NSEvent.mouseLocation) }
     }
   }
-  private func handle(_ event: NSEvent) {
+  private func receivedTap(_ type: CGEventType, event: CGEvent) {
+    if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+      SelectionDiagnostics.record("input tap disabled type=\(type.rawValue)")
+      if let eventTap, AXIsProcessTrusted() {
+        CGEvent.tapEnable(tap: eventTap, enable: true)
+      } else {
+        let generation = inputGeneration
+        DispatchQueue.main.async { [weak self] in
+          guard let self, self.inputGeneration == generation else { return }
+          self.refresh()
+        }
+      }
+      return
+    }
+    // Trackpad scrolling can emit many events per second. Nothing needs to be
+    // dismissed until a selection or overlay exists.
+    if type == .scrollWheel, model.selection == nil, model.overlayFrame?() == nil { return }
+    guard let event = NSEvent(cgEvent: event) else { return }
+    let quartz = event.cgEvent?.location ?? .zero
+    let top = NSScreen.screens.first?.frame.maxY ?? 0
+    let pointer = CGPoint(x: quartz.x, y: top - quartz.y)
+    if type == .keyUp {
+      // AppKit's global monitor never observed key events in SelectionBar itself.
+      guard !NSApp.isActive else { return }
+    } else {
+      let activeFrames = NSApp.isActive ? NSApp.windows.filter(\.isVisible).map(\.frame) : []
+      guard
+        !inputFilter.ignoresMouse(
+          type: type, pointer: pointer, overlay: model.overlayFrame?(), activeWindows: activeFrames)
+      else {
+        if type == .leftMouseDown { mouseDown = nil }
+        return
+      }
+      if type == .leftMouseDown {
+        // Activation can rebuild the tap before the queued callback runs.
+        // Retain the drag origin so the first selection in another app works.
+        mouseDown = pointer
+      }
+    }
+    let generation = inputGeneration
+    // The event-tap callback must return promptly. Snapshot the event position
+    // now so fast drags are measured using their actual down/up coordinates.
+    DispatchQueue.main.async { [weak self] in
+      guard let self, self.inputGeneration == generation else { return }
+      self.handle(event, pointer: pointer)
+    }
+  }
+  private func handle(_ event: NSEvent, pointer: CGPoint) {
     switch event.type {
     case .leftMouseDown:
       SelectionDiagnostics.record("mouse-down")
       self.lastSignature = nil
-      self.mouseDown = NSEvent.mouseLocation
+      self.mouseDown = pointer
       self.model.dismissBar?()
     case .leftMouseUp:
-      let point = NSEvent.mouseLocation
+      let point = pointer
       let dragged = self.mouseDown.map { hypot($0.x - point.x, $0.y - point.y) > 3 } ?? false
       SelectionDiagnostics.record("mouse-up dragged=\(dragged) clicks=\(event.clickCount)")
       if dragged || event.clickCount >= 2 { self.schedule() } else { self.model.dismissBar?() }
@@ -309,9 +388,20 @@ final class SelectionMonitor {
   }
   private func stopMonitor() {
     lastSignature = nil
-    if let global {
-      NSEvent.removeMonitor(global)
-      self.global = nil
+    inputGeneration &+= 1
+    inputFilter = SelectionInputFilter()
+    if let eventTap {
+      CGEvent.tapEnable(tap: eventTap, enable: false)
+      CFMachPortInvalidate(eventTap)
+      self.eventTap = nil
+    }
+    if let eventSource {
+      CFRunLoopRemoveSource(CFRunLoopGetMain(), eventSource, .commonModes)
+      self.eventSource = nil
+    }
+    if let fallback {
+      NSEvent.removeMonitor(fallback)
+      self.fallback = nil
     }
     pending?.cancel()
     pending = nil
@@ -323,6 +413,29 @@ final class SelectionMonitor {
     stopMonitor()
     for observer in observers { workspace.removeObserver(observer) }
     observers = []
+  }
+}
+
+/// Global Core Graphics taps include this application's events, unlike AppKit's
+/// global monitor. Do not dismiss a toolbar while its own buttons are clicked.
+struct SelectionInputFilter {
+  private var ignoredMouseDown = false
+  mutating func ignoresMouse(
+    type: CGEventType, pointer: CGPoint, overlay: CGRect?, activeWindows: [CGRect]
+  ) -> Bool {
+    let ownWindow =
+      overlay?.contains(pointer) == true || activeWindows.contains { $0.contains(pointer) }
+    switch type {
+    case .leftMouseDown:
+      ignoredMouseDown = ownWindow
+      return ownWindow
+    case .leftMouseUp:
+      let ignored = ignoredMouseDown || ownWindow
+      ignoredMouseDown = false
+      return ignored
+    default:
+      return ownWindow
+    }
   }
 }
 
