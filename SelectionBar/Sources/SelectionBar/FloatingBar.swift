@@ -206,6 +206,7 @@ final class FloatingBar: NSObject {
     settings.heightAnchor.constraint(equalToConstant: 34).isActive = true
     stack.addArrangedSubview(settings)
     guard stack.arrangedSubviews.count > 1 else {
+      SelectionDiagnostics.record("bar empty")
       dismiss()
       return
     }
@@ -725,7 +726,7 @@ final class FloatingBar: NSObject {
     panel.level = .popUpMenu
     panel.isOpaque = false
     panel.backgroundColor = .clear
-    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .canJoinAllApplications]
     panel.title = L10n.text("SelectionBar · 大字顯示")
     let visual = NSVisualEffectView(frame: NSRect(origin: .zero, size: screen.frame.size))
     visual.material = .hudWindow
@@ -775,7 +776,9 @@ final class FloatingBar: NSObject {
     visual.addSubview(copy)
     panel.contentView = visual
     panel.setFrame(screen.frame, display: true)
-    panel.orderFrontRegardless()
+    revealOverlay(panel)
+    SelectionDiagnostics.record(
+      "bar visible=\(panel.isVisible) frame=\(panel.frame) anchor=\(anchor) screen=\(screen.frame)")
     self.panel = panel
     installOutsideMonitors()
   }
@@ -822,7 +825,9 @@ final class FloatingBar: NSObject {
     panel.backgroundColor = .clear
     panel.hasShadow = true
     panel.hidesOnDeactivate = false
-    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+    // Spaces and Stage Manager have separate grouping policies. A toolbar must
+    // join the source application's stage, not SelectionBar's preferences stage.
+    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .canJoinAllApplications]
     panel.isMovable = false
     panel.title = L10n.text("SelectionBar 操作列")
     let visual = NSVisualEffectView()
@@ -891,9 +896,26 @@ final class FloatingBar: NSObject {
       ? nil
       : NSAppearance(
         named: model.library.settings.appearance == "dark" ? .darkAqua : .aqua)
-    panel.orderFrontRegardless()
+    revealOverlay(panel)
+    SelectionDiagnostics.record(
+      "toolbar visible=\(panel.isVisible) hiddenApp=\(NSApp.isHidden) activeSpace=\(panel.isOnActiveSpace) window=\(panel.windowNumber) frame=\(panel.frame) anchor=\(anchor) screen=\(screen.frame) pointer=\(String(describing: snapshot?.pointer))"
+    )
     self.panel = panel
     installOutsideMonitors()
+  }
+  private func revealOverlay(_ panel: NSPanel) {
+    // Login items and `open -j` can hide the entire accessory application.
+    // orderFrontRegardless alone does not unhide it, even on the active Space.
+    // Keep its settings/other document windows closed while revealing only the
+    // overlay, and preserve the source application's keyboard focus.
+    if NSApp.isHidden {
+      for window in NSApp.windows
+      where window !== panel && window.styleMask.contains(.titled) && !window.isMiniaturized {
+        window.orderOut(nil)
+      }
+      NSApp.unhideWithoutActivation()
+    }
+    panel.orderFrontRegardless()
   }
   private func installOutsideMonitors() {
     guard outside == nil, localOutside == nil else { return }
@@ -938,6 +960,7 @@ final class FloatingBar: NSObject {
     panel = nil
   }
   func dismiss() {
+    SelectionDiagnostics.record("bar dismissed")
     model.cancelPopulation()
     spelling.cancel()
     dismissPanel()
@@ -978,15 +1001,22 @@ final class FloatingBar: NSObject {
       "spellingRequests": .number(Double(spelling.requestCount)),
     ]
     guard let panel else { return retained.merging(["visible": .bool(false)]) { _, new in new } }
+    let onScreen =
+      (CGWindowListCopyWindowInfo(.optionOnScreenOnly, kCGNullWindowID)
+      as? [[String: Any]] ?? []).contains {
+        ($0[kCGWindowNumber as String] as? Int) == panel.windowNumber
+      }
     func hasScroll(_ view: NSView) -> Bool {
       (view as? NSScrollView)?.hasHorizontalScroller == true
         || view.subviews.contains(where: hasScroll)
     }
     return retained.merging([
       "visible": .bool(panel.isVisible), "x": .number(panel.frame.minX),
+      "onScreen": .bool(onScreen),
       "y": .number(panel.frame.minY),
       "width": .number(panel.frame.width), "height": .number(panel.frame.height),
       "canBecomeKey": .bool(panel.canBecomeKey), "popupLevel": .bool(panel.level == .popUpMenu),
+      "joinsOtherApplications": .bool(panel.collectionBehavior.contains(.canJoinAllApplications)),
       "horizontalScroll": .bool(panel.contentView.map(hasScroll) ?? false),
       "primaryX": primaryScreenX.map { .number(Double($0)) } ?? .null,
     ]) { _, new in new }

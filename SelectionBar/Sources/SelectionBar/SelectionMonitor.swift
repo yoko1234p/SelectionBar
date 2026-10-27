@@ -62,24 +62,59 @@ final class SelectionMonitor {
   private var global: Any?
   private var pending: DispatchWorkItem?
   private var observers: [NSObjectProtocol] = []
+  private let workspace: NotificationCenter
   private var mouseDown: NSPoint?
   private var lastSignature: Int?
   private let browser = BrowserIntegration()
   private var captureTask: Task<Void, Never>?
-  init(model: SelectionModel, onSelection: @escaping (SelectionSnapshot) -> Void) {
+  init(
+    model: SelectionModel, workspace: NotificationCenter = NSWorkspace.shared.notificationCenter,
+    onSelection: @escaping (SelectionSnapshot) -> Void
+  ) {
     self.model = model
+    self.workspace = workspace
     self.onSelection = onSelection
     for name in [
       NSWorkspace.didLaunchApplicationNotification, NSWorkspace.didTerminateApplicationNotification,
       NSWorkspace.didActivateApplicationNotification,
+      NSWorkspace.didWakeNotification, NSWorkspace.screensDidWakeNotification,
+      NSWorkspace.sessionDidBecomeActiveNotification,
+      NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification,
+      NSWorkspace.sessionDidResignActiveNotification,
     ] {
       observers.append(
-        NSWorkspace.shared.notificationCenter.addObserver(forName: name, object: nil, queue: .main)
-        { [weak self] _ in Task { @MainActor in self?.refresh() } })
+        workspace.addObserver(forName: name, object: nil, queue: .main) { [weak self] notice in
+          MainActor.assumeIsolated {
+            let app = notice.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+            self?.workspaceChanged(notice.name, applicationID: app?.bundleIdentifier)
+          }
+        })
+    }
+  }
+  func workspaceChanged(_ name: Notification.Name, applicationID: String? = nil) {
+    if name == NSWorkspace.didLaunchApplicationNotification
+      || name == NSWorkspace.didTerminateApplicationNotification
+    {
+      // Background workers are unrelated to the active selection. Only PopClip
+      // changes the conflict policy; its launch/exit must still refresh hooks.
+      guard SelectionModel.conflictingApplications.contains(applicationID ?? "") else { return }
+    }
+    if [
+      NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification,
+      NSWorkspace.sessionDidResignActiveNotification,
+    ].contains(name) {
+      stopMonitor()
+      mouseDown = nil
+      model.dismissBar?()
+    } else {
+      refresh()
     }
   }
   func refresh() {
     model.refreshStatus()
+    SelectionDiagnostics.record(
+      "refresh permission=\(model.permission) enabled=\(model.library.settings.enabled) conflict=\(model.conflict)"
+    )
     stopMonitor()
     // Activation, permission and settings changes invalidate the old source
     // selection even when no further mouse event arrives to dismiss the bar.
@@ -90,34 +125,38 @@ final class SelectionMonitor {
     global = NSEvent.addGlobalMonitorForEvents(matching: [
       .leftMouseDown, .leftMouseUp, .keyUp, .scrollWheel,
     ]) { [weak self] event in
-      Task { @MainActor in
-        guard let self else { return }
-        switch event.type {
-        case .leftMouseDown:
-          self.lastSignature = nil
-          self.mouseDown = NSEvent.mouseLocation
-          self.model.dismissBar?()
-        case .leftMouseUp:
-          let point = NSEvent.mouseLocation
-          let dragged = self.mouseDown.map { hypot($0.x - point.x, $0.y - point.y) > 3 } ?? false
-          if dragged || event.clickCount >= 2 { self.schedule() } else { self.model.dismissBar?() }
-        case .keyUp:
-          if let combo = try? KeyCombo.parse(self.model.library.settings.hotkey),
-            event.keyCode == combo.code,
-            event.modifierFlags.rawValue & 0x1e0000 == combo.flags & 0x1e0000
-          {
-            self.capture(force: true)
-          } else if event.modifierFlags.contains(.shift),
-            [123, 124, 125, 126].contains(event.keyCode)
-          {
-            self.schedule()
-          } else if event.keyCode == 53 {
-            self.model.dismissBar?()
-          }
-        case .scrollWheel: self.model.dismissBar?()
-        default: break
-        }
+      // AppKit delivers this on the main thread. Preserve event ordering and
+      // pointer state instead of deferring mouse-down until after mouse-up.
+      MainActor.assumeIsolated { self?.handle(event) }
+    }
+  }
+  private func handle(_ event: NSEvent) {
+    switch event.type {
+    case .leftMouseDown:
+      SelectionDiagnostics.record("mouse-down")
+      self.lastSignature = nil
+      self.mouseDown = NSEvent.mouseLocation
+      self.model.dismissBar?()
+    case .leftMouseUp:
+      let point = NSEvent.mouseLocation
+      let dragged = self.mouseDown.map { hypot($0.x - point.x, $0.y - point.y) > 3 } ?? false
+      SelectionDiagnostics.record("mouse-up dragged=\(dragged) clicks=\(event.clickCount)")
+      if dragged || event.clickCount >= 2 { self.schedule() } else { self.model.dismissBar?() }
+    case .keyUp:
+      if let combo = try? KeyCombo.parse(self.model.library.settings.hotkey),
+        event.keyCode == combo.code,
+        event.modifierFlags.rawValue & 0x1e0000 == combo.flags & 0x1e0000
+      {
+        self.capture(force: true)
+      } else if event.modifierFlags.contains(.shift),
+        [123, 124, 125, 126].contains(event.keyCode)
+      {
+        self.schedule()
+      } else if event.keyCode == 53 {
+        self.model.dismissBar?()
       }
+    case .scrollWheel: self.model.dismissBar?()
+    default: break
     }
   }
   private func schedule() {
@@ -127,6 +166,7 @@ final class SelectionMonitor {
     DispatchQueue.main.asyncAfter(deadline: .now() + model.library.settings.delay, execute: item)
   }
   func capture(force: Bool = false) {
+    SelectionDiagnostics.record("capture force=\(force)")
     guard model.storageError == nil else { return }
     model.refreshStatus()
     guard model.permission || force, model.library.settings.enabled || force, !model.conflict else {
@@ -136,6 +176,7 @@ final class SelectionMonitor {
       app.bundleIdentifier != Bundle.main.bundleIdentifier
     else { return }
     let settings = model.library.settings
+    SelectionDiagnostics.record("source=\(app.bundleIdentifier ?? "unknown")")
     let listed = settings.excludedApps.contains(app.bundleIdentifier ?? "")
     guard force || (settings.includedAppsOnly ? listed : !listed) else { return }
     captureTask?.cancel()
@@ -145,9 +186,11 @@ final class SelectionMonitor {
       do {
         var captured: SelectionSnapshot?
         do { captured = try Self.snapshot(app: app) } catch {
+          SelectionDiagnostics.record("AX snapshot failed")
           if error.localizedDescription.contains("密碼") { throw error }
         }
         let id = app.bundleIdentifier ?? ""
+        SelectionDiagnostics.record("AX selected-count=\(captured?.context.text.count ?? -1)")
         var page: BrowserSelection?
         if settings.browserIntegration, let family = BrowserBridge.family(id), family != .basic,
           captured?.context.text.isEmpty != false || captured?.context.browserURL.isEmpty != false
@@ -196,6 +239,7 @@ final class SelectionMonitor {
         fingerprint.combine(snapshot.context.text)
         let signature = fingerprint.finalize()
         if force || lastSignature != signature {
+          SelectionDiagnostics.record("present count=\(snapshot.context.text.count)")
           lastSignature = signature
           model.selection = snapshot
           onSelection(snapshot)
@@ -277,7 +321,7 @@ final class SelectionMonitor {
   }
   func stop() {
     stopMonitor()
-    for observer in observers { NSWorkspace.shared.notificationCenter.removeObserver(observer) }
+    for observer in observers { workspace.removeObserver(observer) }
     observers = []
   }
 }

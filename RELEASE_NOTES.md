@@ -1,3 +1,9 @@
+# 0.5.5 — source update (not yet a downloadable release)
+
+- **English:** Fix invisible selection toolbars after hidden/login launches without stealing focus or opening settings. Ignore unrelated background-app exits and restore selection monitoring after wake. Verified with 168 unit tests and native hidden-launch checks.
+- **繁體中文：** 修正隱藏／登入啟動後工具列無法顯示，保留來源 App 焦點，不彈出設定。避免無關背景程式結束打斷選字，並補上喚醒後的監聽恢復。通過 168 項單元測試及原生隱藏啟動檢查。
+- **简体中文：** 修复隐藏／登录启动后工具栏无法显示，保留来源 App 焦点，不弹出设置。避免无关后台程序退出打断选字，并补上唤醒后的监听恢复。通过 168 项单元测试及原生隐藏启动检查。
+
 # SelectionBar v0.5.2-preview.1
 
 ## English — First public preview

@@ -33,6 +33,7 @@ struct SettingsView: View {
           Button(L10n.text("授權…")) { model.requestPermission() }
           Button {
             model.refreshStatus()
+            model.settingsChanged?()
           } label: {
             Image(systemName: "arrow.clockwise")
           }

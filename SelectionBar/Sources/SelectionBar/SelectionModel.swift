@@ -9,6 +9,9 @@ final class SelectionModel: ObservableObject {
   @Published var library: Library
   @Published var notice = ""
   @Published var permission = false
+  static let conflictingApplications: Set<String> = [
+    "com.pilotmoon.popclip", "com.pilotmoon.popclip-setapp",
+  ]
   @Published var conflict = false
   @Published var busy = false
   @Published var selection: SelectionSnapshot?
@@ -89,13 +92,14 @@ final class SelectionModel: ObservableObject {
   func refreshStatus() {
     permission = AXIsProcessTrusted()
     conflict = NSWorkspace.shared.runningApplications.contains {
-      ["com.pilotmoon.popclip", "com.pilotmoon.popclip-setapp"].contains($0.bundleIdentifier ?? "")
+      Self.conflictingApplications.contains($0.bundleIdentifier ?? "")
     }
   }
   func requestPermission() {
     _ = AXIsProcessTrustedWithOptions(
       [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary)
     refreshStatus()
+    settingsChanged?()
   }
   func importOriginal(reset: Bool = false) {
     guard !busy, storageError == nil else { return }

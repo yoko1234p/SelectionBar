@@ -58,6 +58,7 @@ final class NativeSmoke: NSObject {
         model.selection = initial
         bar.present(initial)
         checks["panel"] = .object(bar.diagnosticGeometry)
+        checks["joinsSourceApplicationStage"] = bar.diagnosticGeometry["joinsOtherApplications"]
         checks["copyButtonClicked"] = .bool(bar.diagnosticClickCopy())
         try await Task.sleep(for: .milliseconds(100))
         checks["copyConfirmed"] = .bool(
@@ -304,6 +305,26 @@ final class NativeSmoke: NSObject {
         } else {
           checks["secondaryMonitorLargeType"] = .string("Only one display attached")
         }
+        // A hidden login launch used to build a toolbar that never reached the
+        // screen. Verify WindowServer visibility, not just the AX window tree.
+        let beforeHiddenFixture = model.library
+        model.library = .initial
+        NSApp.hide(nil)
+        try await Task.sleep(for: .milliseconds(150))
+        checks["hiddenLaunchPrecondition"] = .bool(NSApp.isHidden)
+        let sourcePID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        bar.present(final)
+        try await Task.sleep(for: .milliseconds(150))
+        checks["hiddenLaunchToolbarOnScreen"] = .bool(
+          !NSApp.isHidden && bar.diagnosticGeometry["onScreen"] == .bool(true))
+        checks["hiddenLaunchPreservesSourceFocus"] = .bool(
+          sourcePID != nil && sourcePID != ProcessInfo.processInfo.processIdentifier
+            && NSWorkspace.shared.frontmostApplication?.processIdentifier == sourcePID)
+        checks["hiddenLaunchKeepsSettingsClosed"] = .bool(
+          !NSApp.windows.contains { $0.title == "SelectionBar" && $0.isVisible })
+        bar.dismiss()
+        model.library = beforeHiddenFixture
+
         // Leave a synthetic, persisted settings fixture for guarded AX tests.
         // All files and options belong to this isolated diagnostic profile.
         var configured = module
