@@ -14,9 +14,10 @@ The selection monitor now uses a session event tap, returns every event unchange
 
 - 169 SelectionBar tests passed (37 app-support and 132 core).
 - End-to-end on the installed signed app, with the same owned editor frontmost throughout: BarPilot opened and closed; the next drag selected synthetic text and produced an on-screen toolbar. Escape dismissed it, Control-Option-Space reopened it, and a simulated system mouse click on Copy worked; all original clipboard formats were restored.
+- Repeated the same interaction after launching SelectionBar hidden. The fixture editor deselected its text on Escape, so the owned synthetic selection was explicitly restored before testing the hotkey and Copy. The toolbar was on-screen and Copy succeeded; the original clipboard was restored.
 - BarPilot management remained enabled; SelectionBar's status icon remained in its existing always-hidden category. SelectionBar's live settings remained byte-for-byte unchanged.
 - App bundle signature and 387 packaged localization entries verified. Native monitoring started without an additional permission prompt.
 - A brief idle process sample reported 0.0% CPU and approximately 61 MiB RSS. This is a single sample, not a controlled before/after performance benchmark.
-- Real extended sleep/wake and additional multi-display configurations were not exercised in this change. macOS input tap fallback remains subject to the behavior of AppKit when the system declines a Core Graphics tap.
+- A system-generated tap-disabled notification was not induced; the recovery callback was reviewed but not tested against that system event. Real extended sleep/wake and additional multi-display configurations were not exercised in this change. macOS input tap fallback remains subject to the behavior of AppKit when the system declines a Core Graphics tap.
 
 Diagnostics, enabled only with `--diagnose-selection`, record event delivery, counts and geometry, not selected text, URLs or key codes. The diagnostic launch and temporary fixture were closed; normal SelectionBar remains running.
