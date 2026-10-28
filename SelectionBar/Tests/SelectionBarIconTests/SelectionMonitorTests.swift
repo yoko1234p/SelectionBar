@@ -5,6 +5,41 @@ import XCTest
 @testable import SelectionBar
 
 final class SelectionMonitorTests: XCTestCase {
+  @MainActor func testTypingDismissesToolbarAndCancelsDelayedClick() throws {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let model = SelectionModel(root: root)
+    var dismissals = 0
+    model.dismissBar = { dismissals += 1 }
+    model.overlayFrame = { CGRect(x: 1, y: 1, width: 100, height: 40) }
+    let monitor = SelectionMonitor(model: model, onSelection: { _ in
+      XCTFail("Typing must cancel the delayed click capture")
+    })
+    defer { monitor.stop() }
+    let point = CGPoint(x: 200, y: 200)
+    let down = try XCTUnwrap(NSEvent.mouseEvent(
+      with: .leftMouseDown, location: point, modifierFlags: [], timestamp: 0,
+      windowNumber: 0, context: nil, eventNumber: 1, clickCount: 1, pressure: 1))
+    let up = try XCTUnwrap(NSEvent.mouseEvent(
+      with: .leftMouseUp, location: point, modifierFlags: [], timestamp: 0,
+      windowNumber: 0, context: nil, eventNumber: 2, clickCount: 1, pressure: 0))
+    let key = try XCTUnwrap(NSEvent.keyEvent(
+      with: .keyDown, location: .zero, modifierFlags: [], timestamp: 0, windowNumber: 0,
+      context: nil, characters: "a", charactersIgnoringModifiers: "a", isARepeat: false,
+      keyCode: 0))
+    monitor.handle(down, pointer: point)
+    monitor.handle(up, pointer: point)
+    XCTAssertNotNil(monitor.pending)
+    monitor.handle(key, pointer: point)
+    XCTAssertNil(monitor.pending)
+    XCTAssertEqual(dismissals, 2)
+    let selectionKey = try XCTUnwrap(NSEvent.keyEvent(
+      with: .keyUp, location: .zero, modifierFlags: .shift, timestamp: 0, windowNumber: 0,
+      context: nil, characters: "", charactersIgnoringModifiers: "", isARepeat: false,
+      keyCode: 124))
+    monitor.handle(selectionKey, pointer: point)
+    XCTAssertNotNil(monitor.pending, "Shift-arrow selection must still schedule a toolbar")
+  }
   @MainActor func testInsertionRespectsBrowserExclusionsWhenURLIsUnavailable() {
     let rules = [WebsiteRule(pattern: "private.example")]
     let chrome = "com.google.Chrome"

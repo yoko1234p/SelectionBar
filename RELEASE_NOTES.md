@@ -1,3 +1,9 @@
+# 0.5.8 — source update (not yet a downloadable release)
+
+- **English:** Dismiss the toolbar as soon as typing starts, and cancel delayed click capture to prevent it covering the text. Click the field again to use Paste. See [validation](SelectionBar/docs/typing-dismiss-0.5.8.md).
+- **繁體中文：** 開始輸入時立即收起工具列，並取消延遲顯示，避免遮住文字。再次點擊輸入框即可使用貼上。
+- **简体中文：** 开始输入时立即收起工具栏，并取消延迟显示，避免遮住文字。再次点击输入框即可使用粘贴。
+
 # 0.5.7 — source update (not yet a downloadable release)
 
 - **English:** Show enabled native Paste actions after a click in an accessible editable field; correct standard editing shortcuts when an input method adds Shift. The click path respects secure fields and site exclusions. See [validation](SelectionBar/docs/paste-at-caret-0.5.7.md).

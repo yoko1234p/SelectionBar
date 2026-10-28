@@ -65,13 +65,14 @@ final class SelectionMonitor {
   private var fallback: Any?
   private var inputGeneration: UInt64 = 0
   private var inputFilter = SelectionInputFilter()
-  private var pending: DispatchWorkItem?
+  private(set) var pending: DispatchWorkItem?
   private var observers: [NSObjectProtocol] = []
   private let workspace: NotificationCenter
   private var mouseDown: NSPoint?
   private var lastSignature: Int?
   private let browser = BrowserIntegration()
   private var captureTask: Task<Void, Never>?
+  private var captureGeneration = UUID()
   init(
     model: SelectionModel, workspace: NotificationCenter = NSWorkspace.shared.notificationCenter,
     onSelection: @escaping (SelectionSnapshot) -> Void
@@ -130,7 +131,7 @@ final class SelectionMonitor {
     installInputMonitor()
   }
   private func installInputMonitor() {
-    let types: [CGEventType] = [.leftMouseDown, .leftMouseUp, .keyUp, .scrollWheel]
+    let types: [CGEventType] = [.leftMouseDown, .leftMouseUp, .keyDown, .keyUp, .scrollWheel]
     let mask = types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << $1.rawValue) }
     let context = Unmanaged.passUnretained(self).toOpaque()
     if let tap = CGEvent.tapCreate(
@@ -158,7 +159,7 @@ final class SelectionMonitor {
     // Preserve the previous monitoring path if macOS refuses an event tap.
     SelectionDiagnostics.record("input tap unavailable; using AppKit monitor")
     fallback = NSEvent.addGlobalMonitorForEvents(matching: [
-      .leftMouseDown, .leftMouseUp, .keyUp, .scrollWheel,
+      .leftMouseDown, .leftMouseUp, .keyDown, .keyUp, .scrollWheel,
     ]) { [weak self] event in
       MainActor.assumeIsolated { self?.handle(event, pointer: NSEvent.mouseLocation) }
     }
@@ -180,11 +181,13 @@ final class SelectionMonitor {
     // Trackpad scrolling can emit many events per second. Nothing needs to be
     // dismissed until a selection or overlay exists.
     if type == .scrollWheel, model.selection == nil, model.overlayFrame?() == nil { return }
+    if type == .keyDown, mouseDown == nil, pending == nil, captureTask == nil,
+      model.selection == nil, model.overlayFrame?() == nil { return }
     guard let event = NSEvent(cgEvent: event) else { return }
     let quartz = event.cgEvent?.location ?? .zero
     let top = NSScreen.screens.first?.frame.maxY ?? 0
     let pointer = CGPoint(x: quartz.x, y: top - quartz.y)
-    if type == .keyUp {
+    if type == .keyDown || type == .keyUp {
       // AppKit's global monitor never observed key events in SelectionBar itself.
       guard !NSApp.isActive else { return }
     } else {
@@ -210,12 +213,14 @@ final class SelectionMonitor {
       self.handle(event, pointer: pointer)
     }
   }
-  private func handle(_ event: NSEvent, pointer: CGPoint) {
+  func handle(_ event: NSEvent, pointer: CGPoint) {
     switch event.type {
     case .leftMouseDown:
       SelectionDiagnostics.record("mouse-down")
       pending?.cancel()
+      pending = nil
       captureTask?.cancel()
+      captureTask = nil
       browser.cancel()
       self.lastSignature = nil
       self.mouseDown = pointer
@@ -223,12 +228,22 @@ final class SelectionMonitor {
     case .leftMouseUp:
       let point = pointer
       let dragged = self.mouseDown.map { hypot($0.x - point.x, $0.y - point.y) > 3 } ?? false
+      self.mouseDown = nil
       SelectionDiagnostics.record("mouse-up dragged=\(dragged) clicks=\(event.clickCount)")
       if dragged || event.clickCount >= 2 {
         self.schedule()
       } else {
         self.schedule(insertionPoint: point)
       }
+    case .keyDown:
+      // A click can schedule the insertion toolbar shortly before typing.
+      // Cancel both scheduled and in-flight work so it cannot reappear later.
+      pending?.cancel()
+      pending = nil
+      captureTask?.cancel()
+      captureTask = nil
+      browser.cancel()
+      if model.selection != nil || model.overlayFrame?() != nil { model.dismissBar?() }
     case .keyUp:
       if let combo = try? KeyCombo.parse(self.model.library.settings.hotkey),
         event.keyCode == combo.code,
@@ -248,7 +263,10 @@ final class SelectionMonitor {
   }
   private func schedule(insertionPoint: CGPoint? = nil) {
     pending?.cancel()
-    let item = DispatchWorkItem { [weak self] in self?.capture(insertionPoint: insertionPoint) }
+    let item = DispatchWorkItem { [weak self] in
+      self?.pending = nil
+      self?.capture(insertionPoint: insertionPoint)
+    }
     pending = item
     DispatchQueue.main.asyncAfter(deadline: .now() + model.library.settings.delay, execute: item)
   }
@@ -278,8 +296,11 @@ final class SelectionMonitor {
     }
     captureTask?.cancel()
     browser.cancel()
+    let generation = UUID()
+    captureGeneration = generation
     captureTask = Task { [weak self] in
       guard let self else { return }
+      defer { if self.captureGeneration == generation { self.captureTask = nil } }
       do {
         var captured: SelectionSnapshot?
         do { captured = try Self.snapshot(app: app, insertionPoint: insertionPoint) } catch {
@@ -478,6 +499,7 @@ final class SelectionMonitor {
     pending = nil
     captureTask?.cancel()
     captureTask = nil
+    captureGeneration = UUID()
     browser.cancel()
   }
   func stop() {
