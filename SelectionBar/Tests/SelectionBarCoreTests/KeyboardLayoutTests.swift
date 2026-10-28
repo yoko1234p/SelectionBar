@@ -5,6 +5,14 @@ import XCTest
 @testable import SelectionBarCore
 
 final class KeyboardLayoutTests: XCTestCase {
+  func testStandardEditingShortcutsUseASCIICapableLayout() throws {
+    for key in ["x", "c", "v"] {
+      let expected = try XCTUnwrap(KeyboardLayout.resolveASCII(key))
+      let combo = try KeyCombo.parse("command " + key, useASCIILayout: true)
+      XCTAssertEqual(combo.code, expected.code)
+      XCTAssertEqual(combo.flags, expected.flags | (1 << 20))
+    }
+  }
   private func source(_ id: String) throws -> TISInputSource {
     let filter = [kTISPropertyInputSourceID as String: id] as CFDictionary
     let sources = TISCreateInputSourceList(filter, true).takeRetainedValue()

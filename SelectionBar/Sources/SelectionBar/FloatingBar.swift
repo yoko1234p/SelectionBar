@@ -42,7 +42,11 @@ final class FloatingBar: NSObject {
       population = PopulationState()
       populationSelection = snapshot.capturedAt
     }
-    let visibleEntries = LayoutTree.enabledEntries(model.library.layout)
+    let enabledEntries = LayoutTree.enabledEntries(model.library.layout)
+    let visibleEntries = snapshot.insertionOnly ? enabledEntries.filter {
+      ["paste", "plainpaste"].contains(BuiltInAction($0.provider).id)
+        && model.library.record(for: $0) == nil
+    } : enabledEntries
     if snapshot.context.editable,
       visibleEntries.contains(where: { BuiltInAction($0.provider).id == "spelling" })
     {
@@ -97,7 +101,7 @@ final class FloatingBar: NSObject {
     }
     redrawIcons = { [weak self] in self?.present(snapshot) }
     actions = [:]
-    let entries = visibleEntries.filter { $0.parent == groupID }.sorted {
+    let entries = visibleEntries.filter { snapshot.insertionOnly || $0.parent == groupID }.sorted {
       $0.order < $1.order
     }
     let stack = NSStackView()

@@ -40,6 +40,15 @@ public enum KeyboardLayout {
     return resolve(character, in: source, numericPad: numericPad)
   }
 
+  /// Command-key menu shortcuts use the current ASCII-capable keyboard layout,
+  /// even while an input method exposes Latin letters only with Shift.
+  public static func resolveASCII(_ character: String) -> KeyCombo? {
+    guard Thread.isMainThread,
+      let source = TISCopyCurrentASCIICapableKeyboardLayoutInputSource()?.takeRetainedValue()
+    else { return nil }
+    return resolve(character, in: source)
+  }
+
   static func resolve(_ character: String, in source: TISInputSource, numericPad: Bool = false)
     -> KeyCombo?
   {

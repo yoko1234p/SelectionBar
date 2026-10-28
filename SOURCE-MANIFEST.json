@@ -25,13 +25,23 @@
     },
     {
       "path": "README.md",
-      "bytes": 1926,
-      "sha256": "03e5952acb9f5818f6b179ee7a4fc43e73f2f41edf18dec02165b053002e656c"
+      "bytes": 2071,
+      "sha256": "ab4315cb8259ba1c2541d569c831c69165d20b844f3a077a4dfbe32ae4e44634"
+    },
+    {
+      "path": "README.zh-Hans.md",
+      "bytes": 1944,
+      "sha256": "82f73bda885d85a43f0f80637590914c963d58549a3cafedd8982b51f51e5c95"
+    },
+    {
+      "path": "README.zh-Hant.md",
+      "bytes": 1922,
+      "sha256": "a1ea15b36e2086da829c93fe213c4dcf05187e45d377a3c5a0a7fb7bb2738a46"
     },
     {
       "path": "RELEASE_NOTES.md",
-      "bytes": 5100,
-      "sha256": "f2d91ef2205ae2fbee2fae67e1278a0b39dd987e75e9a603fa84ff99980c3b58"
+      "bytes": 5883,
+      "sha256": "232c43c24d4c55334793a775175b26b01c54465ee10907d48ee4a5435316a417"
     },
     {
       "path": "SECURITY.md",
@@ -81,7 +91,7 @@
     {
       "path": "SelectionBar/Scripts/Info.plist",
       "bytes": 1894,
-      "sha256": "619c5600e9cb62a8695ed878a3dc765895784a05a1e7db9884ba134d71d8c828"
+      "sha256": "103d799d14731af2185f4244c45b671b045af4a98f819706f36e31f8cafe94d1"
     },
     {
       "path": "SelectionBar/Scripts/build.sh",
@@ -160,8 +170,8 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/FloatingBar.swift",
-      "bytes": 43970,
-      "sha256": "a88843c8e3d47fa1b5f6b934b479cf48301c1e0ecc6c92739fca4c40545b4758"
+      "bytes": 44211,
+      "sha256": "21d29443d64db8cfeacc96024eff69706c292d86693023b28c1f65a9c0b01580"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/HoverActionButton.swift",
@@ -195,18 +205,18 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionExecutor.swift",
-      "bytes": 33720,
-      "sha256": "acb3b13514a7fcd07c3fea4c6c4bf6bd08069c8e17f71eee28d329fba0a7e0ce"
+      "bytes": 33840,
+      "sha256": "4f57ea8603e05c59ad737e81170afa0f1b2860bf080a1bc2d07588f8a2ba27e9"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionModel.swift",
-      "bytes": 25093,
-      "sha256": "f483856cc65a9a9a326ec1c92a62aaca4d0c8f0cfe062fa0513adccd2ee3b366"
+      "bytes": 25330,
+      "sha256": "c47d0fe0e2ce399f97e76aebd41dce436fef8dbd0de21e55e3388d846b74d2ce"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionMonitor.swift",
-      "bytes": 19498,
-      "sha256": "bfa9a2096661d386f94463935134652038cdbee3ce8804c071e1f1ac08c091cb"
+      "bytes": 22638,
+      "sha256": "e053f68d1f46dafd2c2d13d0fe12aa93d0fb53bbf9ccdf8b0449243da94c9ee7"
     },
     {
       "path": "SelectionBar/Sources/SelectionBar/SelectionWorkflows.swift",
@@ -255,8 +265,8 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBarCore/ActionContext.swift",
-      "bytes": 13846,
-      "sha256": "86d8608aa05c151d516e0c022043f80b5756c48a0ac057783aa74619dd5180c4"
+      "bytes": 13971,
+      "sha256": "806629606a8e2f616a5984320eb253d9bf1c4cf538d5daae8875f9367d08e879"
     },
     {
       "path": "SelectionBar/Sources/SelectionBarCore/AssociatedApplications.swift",
@@ -315,8 +325,8 @@
     },
     {
       "path": "SelectionBar/Sources/SelectionBarCore/KeyboardLayout.swift",
-      "bytes": 4813,
-      "sha256": "30b934c8a7d0fa60a6a0fb007629cac6936664051afe9194622225057dcb5df5"
+      "bytes": 5231,
+      "sha256": "07f744e7f1c9a504bd81ce1131fd3a2b8810ff9be688aeff28f248b175449490"
     },
     {
       "path": "SelectionBar/Sources/SelectionBarCore/LayoutTree.swift",
@@ -515,8 +525,8 @@
     },
     {
       "path": "SelectionBar/Tests/SelectionBarCoreTests/KeyboardLayoutTests.swift",
-      "bytes": 2351,
-      "sha256": "090daa8dfe7467611b6722667982c6d5531fb6e234c9f7097a7075b612c3b10e"
+      "bytes": 2718,
+      "sha256": "ea495498dc745ff7f03fb62e05363111bdab6f97c48e74ae84933348294e60ee"
     },
     {
       "path": "SelectionBar/Tests/SelectionBarCoreTests/LayoutTreeTests.swift",
@@ -625,13 +635,13 @@
     },
     {
       "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionModelTests.swift",
-      "bytes": 6287,
-      "sha256": "7724b8b446233c1d5f9f86108cef1e55cf364636d2e01b2ab13cc924ac199c10"
+      "bytes": 8482,
+      "sha256": "4945f9cee9ffe837f6fa83d194ce444095ed3418f9a04f0113f04548d01bf81e"
     },
     {
       "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionMonitorTests.swift",
-      "bytes": 4125,
-      "sha256": "c678a08157430ed8e71b064c52757fd01c70f366728c24694bbae2b9f7a4b077"
+      "bytes": 4852,
+      "sha256": "930ce93027b18235029b286c898782323bf163aa1e07e495bfe92c8c53979811"
     },
     {
       "path": "SelectionBar/Tests/SelectionBarIconTests/SelectionWorkflowTests.swift",
@@ -687,6 +697,11 @@
       "path": "SelectionBar/docs/compatibility.md",
       "bytes": 2464,
       "sha256": "1162947d53ed1a8ebabc5f601888a80e7eb7a865bb0959d958bd31dfcb5e2edf"
+    },
+    {
+      "path": "SelectionBar/docs/paste-at-caret-0.5.7.md",
+      "bytes": 1864,
+      "sha256": "d4652887b1697c062defaa61f75b7fb50deca2720f99e28b1c142d4634ab1896"
     },
     {
       "path": "SelectionBar/docs/selection-monitor-0.5.6.md",
@@ -762,6 +777,11 @@
       "path": "THIRD_PARTY_NOTICES.md",
       "bytes": 821,
       "sha256": "1cdaaf4d67c01100bdb7475c293166eb459fe1a1d221a22fd94003888f7b0dd6"
+    },
+    {
+      "path": "assets/hero.svg",
+      "bytes": 1268,
+      "sha256": "23cd847ab2ace8e90d78607af61b422112d95e64c532a371b94cde6266786d76"
     },
     {
       "path": "docs/localization.md",

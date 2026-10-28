@@ -6,6 +6,47 @@ import XCTest
 @testable import SelectionBar
 
 final class SelectionModelTests: XCTestCase {
+  @MainActor func testPasteVisibilitySupportsImagesAndRespectsEditableFields() {
+    let board = NSPasteboard.withUniqueName()
+    defer { board.releaseGlobally() }
+    let paste = BuiltInAction("app.popclip.builtin.paste")
+    let plain = BuiltInAction("app.popclip.builtin.plainpaste")
+    let editable = ActionContext(text: "", editable: true)
+    XCTAssertFalse(paste.visible(editable, pasteboard: board))
+    XCTAssertTrue(board.setData(Data([0x89, 0x50, 0x4e, 0x47]), forType: .png))
+    XCTAssertTrue(paste.visible(editable, pasteboard: board))
+    XCTAssertFalse(plain.visible(editable, pasteboard: board))
+    XCTAssertFalse(paste.visible(ActionContext(text: "", editable: false), pasteboard: board))
+    board.clearContents()
+    XCTAssertTrue(board.setString("fixture", forType: .string))
+    XCTAssertTrue(plain.visible(editable, pasteboard: board))
+  }
+  @MainActor func testInsertionToolbarDoesNotPopulateExtensions() {
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let model = SelectionModel(root: root)
+    let record = ExtensionRecord(
+      id: "fixture.insertion.module", name: "Must not populate", packagePath: root.path,
+      digest: "synthetic", config: [:],
+      actions: [ExtensionAction(id: "m", title: "Module", config: ["module": .string("missing")])])
+    model.library.extensions = [record]
+    model.library.layout = [LayoutEntry(id: "module", provider: record.id, order: 0)]
+    let element = AXUIElementCreateApplication(ProcessInfo.processInfo.processIdentifier)
+    var snapshot = SelectionSnapshot(
+      context: ActionContext(text: "", editable: true), application: .current,
+      element: element, range: nil, anchor: .zero, capturedAt: Date(),
+      lease: SelectionLease(element: element, text: "", range: nil))
+    snapshot.insertionOnly = true
+    var renders = 0
+    model.renderToolbar = { captured, state in
+      renders += 1
+      XCTAssertTrue(captured.insertionOnly)
+      XCTAssertTrue(state.pending.isEmpty)
+      XCTAssertTrue(state.actions.isEmpty)
+    }
+    model.prepareToolbar(snapshot)
+    XCTAssertEqual(renders, 1)
+  }
   @MainActor func testDisabledSpellingCannotExecuteThroughOldCandidateButton() {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     defer { try? FileManager.default.removeItem(at: root) }

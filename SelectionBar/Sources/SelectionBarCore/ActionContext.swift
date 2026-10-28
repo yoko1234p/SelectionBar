@@ -260,7 +260,9 @@ public enum ActionMatcher {
 public struct KeyCombo: Equatable, Sendable {
   public var code: UInt16
   public var flags: UInt64
-  public static func parse(_ raw: String, additionalFlags: UInt64 = 0) throws -> KeyCombo {
+  public static func parse(
+    _ raw: String, additionalFlags: UInt64 = 0, useASCIILayout: Bool = false
+  ) throws -> KeyCombo {
     let pieces = raw.lowercased().split(separator: " ").map(String.init)
     guard let key = pieces.last else { throw LibraryError.invalid(L10n.text("快捷鍵不可留空。")) }
     var flags = additionalFlags
@@ -275,7 +277,10 @@ public struct KeyCombo: Equatable, Sendable {
       }
     }
     if key.count == 1 {
-      guard let resolved = KeyboardLayout.resolve(key, numericPad: flags & (1 << 21) != 0) else {
+      let resolved = useASCIILayout
+        ? KeyboardLayout.resolveASCII(key)
+        : KeyboardLayout.resolve(key, numericPad: flags & (1 << 21) != 0)
+      guard let resolved else {
         throw LibraryError.invalid(L10n.text("目前鍵盤排列無法輸入此快捷鍵字元：%1$@", String(describing: key)))
       }
       return KeyCombo(code: resolved.code, flags: flags | resolved.flags)

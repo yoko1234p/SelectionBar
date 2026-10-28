@@ -1,3 +1,9 @@
+# 0.5.7 — source update (not yet a downloadable release)
+
+- **English:** Show enabled native Paste actions after a click in an accessible editable field; correct standard editing shortcuts when an input method adds Shift. The click path respects secure fields and site exclusions. See [validation](SelectionBar/docs/paste-at-caret-0.5.7.md).
+- **繁體中文：** 單擊可由輔助使用辨識的輸入欄位時顯示已啟用的貼上操作；修正部分輸入法令標準剪貼快捷鍵帶上 Shift 的問題。密碼欄位及網站排除設定仍受保護。
+- **简体中文：** 单击辅助功能可识别的输入框时显示已启用的粘贴操作；修正部分输入法使标准剪贴快捷键带上 Shift 的问题。密码字段及网站排除设置仍受保护。
+
 # 0.5.6 — source update (not yet a downloadable release)
 
 - **English:** Keep selection monitoring working after BarPilot opens and closes while the same app remains active. The monitor preserves input events, restores a system-disabled tap and keeps toolbar buttons clickable. Verified with 169 tests and a real BarPilot interaction.

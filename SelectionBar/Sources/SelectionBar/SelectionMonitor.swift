@@ -14,6 +14,7 @@ struct SelectionSnapshot {
   var localEditor: NSTextView? = nil
   var pointer: CGPoint? = nil
   var browserLease: BrowserSelectionLease? = nil
+  var insertionOnly = false
 }
 
 @MainActor
@@ -213,6 +214,9 @@ final class SelectionMonitor {
     switch event.type {
     case .leftMouseDown:
       SelectionDiagnostics.record("mouse-down")
+      pending?.cancel()
+      captureTask?.cancel()
+      browser.cancel()
       self.lastSignature = nil
       self.mouseDown = pointer
       self.model.dismissBar?()
@@ -220,7 +224,11 @@ final class SelectionMonitor {
       let point = pointer
       let dragged = self.mouseDown.map { hypot($0.x - point.x, $0.y - point.y) > 3 } ?? false
       SelectionDiagnostics.record("mouse-up dragged=\(dragged) clicks=\(event.clickCount)")
-      if dragged || event.clickCount >= 2 { self.schedule() } else { self.model.dismissBar?() }
+      if dragged || event.clickCount >= 2 {
+        self.schedule()
+      } else {
+        self.schedule(insertionPoint: point)
+      }
     case .keyUp:
       if let combo = try? KeyCombo.parse(self.model.library.settings.hotkey),
         event.keyCode == combo.code,
@@ -238,13 +246,13 @@ final class SelectionMonitor {
     default: break
     }
   }
-  private func schedule() {
+  private func schedule(insertionPoint: CGPoint? = nil) {
     pending?.cancel()
-    let item = DispatchWorkItem { [weak self] in self?.capture() }
+    let item = DispatchWorkItem { [weak self] in self?.capture(insertionPoint: insertionPoint) }
     pending = item
     DispatchQueue.main.asyncAfter(deadline: .now() + model.library.settings.delay, execute: item)
   }
-  func capture(force: Bool = false) {
+  func capture(force: Bool = false, insertionPoint: CGPoint? = nil) {
     SelectionDiagnostics.record("capture force=\(force)")
     guard model.storageError == nil else { return }
     model.refreshStatus()
@@ -258,20 +266,36 @@ final class SelectionMonitor {
     SelectionDiagnostics.record("source=\(app.bundleIdentifier ?? "unknown")")
     let listed = settings.excludedApps.contains(app.bundleIdentifier ?? "")
     guard force || (settings.includedAppsOnly ? listed : !listed) else { return }
+    if insertionPoint != nil {
+      let insertion = ActionContext(text: "", editable: true)
+      guard
+        LayoutTree.enabledEntries(model.library.layout).contains(where: {
+          ["paste", "plainpaste"].contains(BuiltInAction($0.provider).id)
+            && model.library.record(for: $0) == nil
+            && BuiltInAction($0.provider).visible(insertion)
+        })
+      else { return }
+    }
     captureTask?.cancel()
     browser.cancel()
     captureTask = Task { [weak self] in
       guard let self else { return }
       do {
         var captured: SelectionSnapshot?
-        do { captured = try Self.snapshot(app: app) } catch {
+        do { captured = try Self.snapshot(app: app, insertionPoint: insertionPoint) } catch {
           SelectionDiagnostics.record("AX snapshot failed")
           if error.localizedDescription.contains("密碼") { throw error }
+        }
+        if insertionPoint != nil {
+          guard let captured, captured.context.editable, captured.context.text.isEmpty else {
+            return
+          }
         }
         let id = app.bundleIdentifier ?? ""
         SelectionDiagnostics.record("AX selected-count=\(captured?.context.text.count ?? -1)")
         var page: BrowserSelection?
-        if settings.browserIntegration, let family = BrowserBridge.family(id), family != .basic,
+        if insertionPoint == nil, settings.browserIntegration, let family = BrowserBridge.family(id),
+          family != .basic,
           captured?.context.text.isEmpty != false || captured?.context.browserURL.isEmpty != false
         {
           page = try? await browser.read(
@@ -305,10 +329,21 @@ final class SelectionMonitor {
             snapshot.browserLease = BrowserSelectionLease(page, browserID: id)
           }
         }
-        guard force || !snapshot.context.text.isEmpty else { return }
+        // Never bypass configured website exclusions when a browser does not
+        // expose its current URL through Accessibility for a simple click.
+        if insertionPoint != nil,
+          !Self.allowsInsertion(appID: id, url: snapshot.context.browserURL, rules: settings.websiteRules)
+        {
+          return
+        }
+        guard force || !snapshot.context.text.isEmpty || insertionPoint != nil else { return }
         guard
           force || !WebsiteRules.excludes(snapshot.context.browserURL, rules: settings.websiteRules)
         else { return }
+        snapshot.insertionOnly = insertionPoint != nil
+        if let point = insertionPoint {
+          snapshot.anchor = CGRect(x: point.x, y: point.y, width: 1, height: 1)
+        }
         // Dedupe only needs a process-local fingerprint. Retaining the entire
         // selection here kept up to 2 MB of private text after the bar closed.
         var fingerprint = Hasher()
@@ -326,7 +361,40 @@ final class SelectionMonitor {
       } catch { if force && !Task.isCancelled { model.notice = error.localizedDescription } }
     }
   }
-  static func snapshot(app: NSRunningApplication) throws -> SelectionSnapshot {
+  static func allowsInsertion(appID: String, url: String, rules: [WebsiteRule]) -> Bool {
+    if BrowserBridge.family(appID) != nil, rules.contains(where: \.enabled), url.isEmpty {
+      return false
+    }
+    return !WebsiteRules.excludes(url, rules: rules)
+  }
+  private static func isEditableHit(_ focused: AXUIElement, point: CGPoint) -> Bool {
+    var selectedTextSettable: DarwinBoolean = false
+    var valueSettable: DarwinBoolean = false
+    AXUIElementIsAttributeSettable(
+      focused, kAXSelectedTextAttribute as CFString, &selectedTextSettable)
+    AXUIElementIsAttributeSettable(focused, kAXValueAttribute as CFString, &valueSettable)
+    guard selectedTextSettable.boolValue || valueSettable.boolValue else { return false }
+    let system = AXUIElementCreateSystemWide()
+    let primaryTop = NSScreen.screens.first?.frame.maxY ?? 0
+    var hit: AXUIElement?
+    guard
+      AXUIElementCopyElementAtPosition(system, Float(point.x), Float(primaryTop - point.y), &hit)
+        == .success
+    else { return false }
+    // The hit may be a child of a text view; never accept an unrelated element
+    // simply because the previous text field retained keyboard focus.
+    for _ in 0..<12 {
+      guard let element = hit else { break }
+      if CFEqual(element, focused) { return true }
+      guard let parent = AX.read(element, kAXParentAttribute),
+        CFGetTypeID(parent) == AXUIElementGetTypeID() else { break }
+      hit = unsafeBitCast(parent, to: AXUIElement.self)
+    }
+    return false
+  }
+  static func snapshot(app: NSRunningApplication, insertionPoint: CGPoint? = nil) throws
+    -> SelectionSnapshot
+  {
     let application = AXUIElementCreateApplication(app.processIdentifier)
     AXUIElementSetMessagingTimeout(application, 0.3)
     guard let element = AX.read(application, kAXFocusedUIElementAttribute) else {
@@ -337,6 +405,9 @@ final class SelectionMonitor {
     let subrole = AX.string(focused, kAXSubroleAttribute)
     guard !role.lowercased().contains("secure"), !subrole.lowercased().contains("secure") else {
       throw LibraryError.invalid(L10n.text("密碼欄位不顯示操作列。"))
+    }
+    if let insertionPoint, !isEditableHit(focused, point: insertionPoint) {
+      throw LibraryError.invalid(L10n.text("此 App 未提供可讀取的文字選區。"))
     }
     let text = AX.string(focused, kAXSelectedTextAttribute)
     guard text.utf8.count <= 2 * 1024 * 1024 else {

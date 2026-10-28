@@ -124,7 +124,8 @@ final class SelectionExecutor {
     guard ["app", "session", "hid"].contains(target) else {
       throw LibraryError.invalid(L10n.text("未知按鍵目標。"))
     }
-    let combo = try KeyCombo.parse(raw, additionalFlags: additional)
+    let standardEdit = ["command x", "command c", "command v"].contains(raw.lowercased())
+    let combo = try KeyCombo.parse(raw, additionalFlags: additional, useASCIILayout: standardEdit)
     try Task.checkCancellation()
     if target == "app", try await validate(snapshot) == false {
       throw LibraryError.invalid(L10n.text("原選區已改動，請重新選取文字。"))

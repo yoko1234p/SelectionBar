@@ -1,9 +1,21 @@
 import AppKit
+import SelectionBarCore
 import XCTest
 
 @testable import SelectionBar
 
 final class SelectionMonitorTests: XCTestCase {
+  @MainActor func testInsertionRespectsBrowserExclusionsWhenURLIsUnavailable() {
+    let rules = [WebsiteRule(pattern: "private.example")]
+    let chrome = "com.google.Chrome"
+    XCTAssertFalse(SelectionMonitor.allowsInsertion(appID: chrome, url: "", rules: rules))
+    XCTAssertFalse(SelectionMonitor.allowsInsertion(
+      appID: chrome, url: "https://private.example/path", rules: rules))
+    XCTAssertTrue(SelectionMonitor.allowsInsertion(
+      appID: chrome, url: "https://public.example", rules: rules))
+    XCTAssertTrue(SelectionMonitor.allowsInsertion(appID: chrome, url: "", rules: []))
+    XCTAssertTrue(SelectionMonitor.allowsInsertion(appID: "fixture.editor", url: "", rules: rules))
+  }
   func testOwnOverlayAndActiveWindowsDoNotConsumeClicksForAnotherApplication() {
     let toolbar = CGRect(x: 100, y: 100, width: 200, height: 44)
     let settings = CGRect(x: -600, y: 30, width: 500, height: 600)

@@ -261,6 +261,11 @@ final class SelectionModel: ObservableObject {
   func prepareToolbar(_ snapshot: SelectionSnapshot) {
     guard storageError == nil else { return }
     selection = snapshot
+    if snapshot.insertionOnly {
+      toolbarPopulation.cancel()
+      renderToolbar?(snapshot, PopulationState())
+      return
+    }
     let enabledIDs = Set(LayoutTree.enabledEntries(library.layout).map(\.id))
     let entries = library.layoutRows.map(\.entry).filter { enabledIDs.contains($0.id) }
     let jobs = entries.compactMap { entry -> PopulationJob? in
@@ -619,11 +624,13 @@ struct BuiltInAction {
   var symbol: String {
     BuiltInCatalog.action(id)?.symbol ?? "bolt"
   }
-  @MainActor func visible(_ context: ActionContext) -> Bool {
+  @MainActor func visible(_ context: ActionContext, pasteboard: NSPasteboard = .general) -> Bool {
     switch id {
     case "cut": return context.editable && !context.text.isEmpty
-    case "paste", "plainpaste":
-      return context.editable && NSPasteboard.general.availableType(from: [.string]) != nil
+    case "paste":
+      return context.editable && !(pasteboard.types ?? []).isEmpty
+    case "plainpaste":
+      return context.editable && pasteboard.availableType(from: [.string]) != nil
     case "openlink": return !context.urls.isEmpty
     case "openmail": return !ActionMatcher.emails(context.text).isEmpty
     case "revealfile": return !ActionMatcher.paths(context.text).isEmpty
